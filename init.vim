@@ -88,6 +88,7 @@ Plug 'brookhong/ag.vim'
 Plug 'kien/rainbow_parentheses.vim'
 Plug 'tpope/vim-commentary'
 Plug 'jrosiek/vim-mark'
+Plug 'ludovicchabant/vim-gutentags'
 Plug 'kshenoy/vim-signature'
 Plug 'unblevable/quick-scope'
 
