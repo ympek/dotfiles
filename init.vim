@@ -8,6 +8,8 @@ nnoremap ; :
 set path+=**
 set wildmenu                " display all matching files when we tab complete
 
+" mixed feelings about this maps, I invented them and they work 4 me but
+" remapping c-z? c'mon...
 nnoremap <c-x> :bnext<CR>
 nnoremap <c-z> :bprevious<CR>
 
@@ -18,16 +20,19 @@ nnoremap <leader>z ^
 nnoremap <leader>f :vertical resize 100<CR>
 map <leader>s <C-w><C-w>
 map <leader>c :noh <CR>
-"
+nnoremap <leader>g *<C-O>:%s///gn<CR>
+
 " open new split panes to right and bottom, which feels more natural than Vim’s default
 set splitbelow
 set splitright
 
+" tag file I usually have in main dir of project
 set tags=./tags;
+
 " use only spaces to indent, 2 spaces per level
-set expandtab               " replace tabs with spaces
-set tabstop=2               " how many columns a tab counts for
-set shiftwidth=2           " control how many columns text is indented with
+set expandtab    " replace tabs with spaces
+set tabstop=2    " how many columns a tab counts for
+set shiftwidth=2 " control how many columns text is indented with
 
 " Tweaks for browsing
 let g:netrw_banner=0       " disable annoying banner
@@ -55,7 +60,7 @@ set smarttab
 set si "smart indent"
 set showtabline=2
 
-""Mappings
+"numbers
 noremap <F2> :set number!<CR>
 noremap <F3> :set relativenumber!<CR>
 
@@ -68,6 +73,7 @@ map ^[OC <right>
 map <C-\> :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
 map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 
+" PLUGINS
 call plug#begin()
 " base
 Plug 'itchyny/lightline.vim'
@@ -97,6 +103,9 @@ hi CursorLine cterm=NONE ctermbg=234
 set colorcolumn=120
 hi ColorColumn cterm=NONE ctermbg=239
 hi Search ctermfg=000 ctermbg=214
+hi BufTabLineCurrent ctermfg=047
+hi BufTabLineActive ctermfg=023
+
 
 nmap <leader>p :RainbowParenthesesToggleAll<CR>
 au Syntax * RainbowParenthesesLoadRound
@@ -122,6 +131,30 @@ let g:rbpt_colorpairs = [
     \ ]
 
 nnoremap <C-p> :FuzzyOpen<CR>
+if !has('gui_running')
+  set t_Co=256
+endif
+
+
+" rename variable/fun etc in file
+nnoremap <silent><Leader>R :%s/\<<c-r><c-w>\>//gI<c-f>$F/i
+
+" toggle between cpp and hpp file
+function! OpenOther()
+    if expand("%:e") == "cpp"
+        exe "edit" fnameescape(expand("%:p:r:s?src?include?").".hpp")
+    elseif expand("%:e") == "hpp"
+        exe "edit" fnameescape(expand("%:p:r:s?include?src?").".cpp")
+    endif
+endfunction
+nmap <Leader>a :call OpenOther()<CR>
+
+
+"remember the line I was on when I reopen a file
+autocmd BufReadPost *
+      \ if line("'\"") > 0 && line("'\"") <= line("$") |
+      \ exe "normal! g`\"" |
+      \ endif
 
 let g:netrw_sort_by='time'
 let g:netrw_sort_direction='reverse'
