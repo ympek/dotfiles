@@ -17,10 +17,12 @@ nnoremap <c-z> :bprevious<CR>
 let mapleader = "\<Space>"
 map <leader>o :echo expand("%:p") <CR>
 nnoremap <leader>z ^
-nnoremap <leader>f :vertical resize 100<CR>
+nnoremap <leader>w :vertical resize 100<CR>
 map <leader>s <C-w><C-w>
 map <leader>c :noh <CR>
 nnoremap <leader>g *<C-O>:%s///gn<CR>
+noremap <leader>f :Ag! "<cword>"<cr>
+
 
 " open new split panes to right and bottom, which feels more natural than Vim’s default
 set splitbelow
@@ -82,10 +84,16 @@ Plug 'vim-utils/vim-interruptless'
 Plug 'sheerun/vim-polyglot'
 Plug 'osyo-manga/vim-brightest'
 Plug 'cloudhead/neovim-fuzzy'
+Plug 'brookhong/ag.vim'
 Plug 'kien/rainbow_parentheses.vim'
 Plug 'tpope/vim-commentary'
 Plug 'jrosiek/vim-mark'
 Plug 'kshenoy/vim-signature'
+Plug 'unblevable/quick-scope'
+
+" filesystem
+Plug 'justinmk/vim-dirvish'
+
 " c/cpp
 Plug 'octol/vim-cpp-enhanced-highlight'
 " webdev
@@ -94,6 +102,13 @@ Plug 'qbbr/vim-symfony'
 Plug 'YorickPeterse/happy_hacking.vim'
 Plug 'fcpg/vim-fahrenheit'
 call plug#end()
+
+" regarding quick-scope plugin:
+augroup qs_colors
+  autocmd!
+  autocmd ColorScheme * highlight QuickScopePrimary ctermfg=155 cterm=underline
+  autocmd ColorScheme * highlight QuickScopeSecondary ctermfg=81 cterm=underline
+augroup END
 
 " look and feel
 colorscheme happy_hacking
