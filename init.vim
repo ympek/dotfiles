@@ -62,6 +62,10 @@ set smarttab
 set si "smart indent"
 set showtabline=2
 
+set visualbell
+set undolevels=9999999
+set history=2000
+set lazyredraw
 "numbers
 noremap <F2> :set number!<CR>
 noremap <F3> :set relativenumber!<CR>
@@ -90,7 +94,10 @@ Plug 'tpope/vim-commentary'
 Plug 'jrosiek/vim-mark'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'kshenoy/vim-signature'
+
+" for learning vim
 Plug 'unblevable/quick-scope'
+Plug 'takac/vim-hardtime'
 
 " filesystem
 Plug 'justinmk/vim-dirvish'
