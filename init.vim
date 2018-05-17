@@ -1,12 +1,15 @@
 set nocompatible              " be iMproved, required
 filetype off                  " required
 
-" my two must-have remaps
 imap jk <Esc>
+imap kj <Esc>
 nnoremap ; :
 
 set path+=**
 set wildmenu                " display all matching files when we tab complete
+
+set ignorecase
+set smartcase
 
 " mixed feelings about this maps, I invented them and they work 4 me but
 " remapping c-z? c'mon...
@@ -23,12 +26,18 @@ map <leader>c :noh <CR>
 nnoremap <leader>g *<C-O>:%s///gn<CR>
 noremap <leader>f :Ag! "<cword>"<cr>
 
+" If you don't use return to navigate in normal mode, you can remap two returns to insert a new line
+nnoremap <CR><CR> o<Esc>
+
+" vanilla snippets!
+nnoremap <leader>Sr :-1read $HOME/.config/nvim/snippets/symfony-route.yaml<CR>
 
 " open new split panes to right and bottom, which feels more natural than Vim’s default
 set splitbelow
 set splitright
 
 " tag file I usually have in main dir of project
+" ok this is default in nvim I guess
 set tags=./tags;
 
 " use only spaces to indent, 2 spaces per level
@@ -88,13 +97,14 @@ Plug 'vim-utils/vim-interruptless'
 Plug 'sheerun/vim-polyglot'
 Plug 'osyo-manga/vim-brightest'
 Plug 'cloudhead/neovim-fuzzy'
-Plug 'brookhong/ag.vim'
 Plug 'kien/rainbow_parentheses.vim'
 Plug 'tpope/vim-commentary'
 Plug 'jrosiek/vim-mark'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'kshenoy/vim-signature'
 
+Plug 'dyng/ctrlsf.vim'
+Plug 'w0rp/ale'
 " for learning vim
 Plug 'unblevable/quick-scope'
 Plug 'takac/vim-hardtime'
@@ -105,7 +115,9 @@ Plug 'justinmk/vim-dirvish'
 " c/cpp
 Plug 'octol/vim-cpp-enhanced-highlight'
 " webdev
+Plug 'StanAngeloff/php.vim'
 Plug 'qbbr/vim-symfony'
+Plug 'nelsyeung/twig.vim'
 " colorschemes:
 Plug 'YorickPeterse/happy_hacking.vim'
 Plug 'fcpg/vim-fahrenheit'
@@ -160,7 +172,7 @@ endif
 
 
 " rename variable/fun etc in file
-nnoremap <silent><Leader>R :%s/\<<c-r><c-w>\>//gI<c-f>$F/i
+nnoremap <silent><leader>R :%s/\<<c-r><c-w>\>//gI<c-f>$F/i
 
 " toggle between cpp and hpp file
 function! OpenOther()
@@ -170,7 +182,7 @@ function! OpenOther()
         exe "edit" fnameescape(expand("%:p:r:s?include?src?").".cpp")
     endif
 endfunction
-nmap <Leader>a :call OpenOther()<CR>
+nmap <leader>a :call OpenOther()<CR>
 
 
 "remember the line I was on when I reopen a file
@@ -190,3 +202,7 @@ autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
 autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
+
+" remove unwanted whitespace from file
+nnoremap <leader>t :%s/\s\+$//e<CR>
+
