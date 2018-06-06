@@ -54,6 +54,8 @@ let g:netrw_liststyle=3    " tree view
 " deletes netrw's buffer once it's hidden (using ':q', for example)
 autocmd FileType netrw setl bufhidden=delete
 
+set clipboard=unnamed
+
 syntax on
 set encoding=utf-8
 set backspace=2
@@ -119,8 +121,9 @@ Plug 'StanAngeloff/php.vim'
 Plug 'qbbr/vim-symfony'
 Plug 'nelsyeung/twig.vim'
 " colorschemes:
-Plug 'YorickPeterse/happy_hacking.vim'
+Plug 'ympek/happy_hacking.vim'
 Plug 'fcpg/vim-fahrenheit'
+Plug 'terryma/vim-smooth-scroll'
 call plug#end()
 
 " regarding quick-scope plugin:
@@ -137,7 +140,6 @@ set cursorline
 hi CursorLine cterm=NONE ctermbg=234
 set colorcolumn=120
 hi ColorColumn cterm=NONE ctermbg=239
-hi Search ctermfg=000 ctermbg=214
 hi BufTabLineCurrent ctermfg=047
 hi BufTabLineActive ctermfg=023
 
@@ -205,4 +207,17 @@ autocmd BufWinLeave * call clearmatches()
 
 " remove unwanted whitespace from file
 nnoremap <leader>t :%s/\s\+$//e<CR>
+
+noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 0, 2)<CR>
+noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 0, 2)<CR>
+
+
+nmap     <C-F>f <Plug>CtrlSFPrompt
+vmap     <C-F>f <Plug>CtrlSFVwordPath
+vmap     <C-F>F <Plug>CtrlSFVwordExec
+nmap     <C-F>n <Plug>CtrlSFCwordPath
+nmap     <C-F>p <Plug>CtrlSFPwordPath
+nnoremap <C-F>o :CtrlSFOpen<CR>
+nnoremap <C-F>t :CtrlSFToggle<CR>
+inoremap <C-F>t <Esc>:CtrlSFToggle<CR>
 
