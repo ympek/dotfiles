@@ -104,9 +104,10 @@ Plug 'tpope/vim-commentary'
 Plug 'jrosiek/vim-mark'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'kshenoy/vim-signature'
-
+Plug 'mbbill/undotree'
 Plug 'dyng/ctrlsf.vim'
 Plug 'w0rp/ale'
+
 " for learning vim
 Plug 'unblevable/quick-scope'
 Plug 'takac/vim-hardtime'
@@ -225,3 +226,13 @@ let g:ctrlsf_auto_close = {
     \ "normal" : 0,
     \ "compact": 0
     \}
+
+" persistent undo
+if !isdirectory($HOME."/.config/nvim/undodir")
+    call mkdir($HOME."/.config/nvim/undodir", "p")
+endif
+
+set undodir=~/.config/nvim/undodir
+set undofile
+set undolevels=99999 "maximum number of changes that can be undone
+set undoreload=10000 "maximum number lines to save for undo on a buffer reload
