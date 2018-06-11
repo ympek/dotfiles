@@ -221,3 +221,7 @@ nnoremap <C-F>o :CtrlSFOpen<CR>
 nnoremap <C-F>t :CtrlSFToggle<CR>
 inoremap <C-F>t <Esc>:CtrlSFToggle<CR>
 
+let g:ctrlsf_auto_close = {
+    \ "normal" : 0,
+    \ "compact": 0
+    \}
