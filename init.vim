@@ -24,10 +24,6 @@ nnoremap <leader>w :vertical resize 100<CR>
 map <leader>s <C-w><C-w>
 map <leader>c :noh <CR>
 nnoremap <leader>g *<C-O>:%s///gn<CR>
-noremap <leader>f :Ag! "<cword>"<cr>
-
-" If you don't use return to navigate in normal mode, you can remap two returns to insert a new line
-nnoremap <CR><CR> o<Esc>
 
 " vanilla snippets!
 nnoremap <leader>Sr :-1read $HOME/.config/nvim/snippets/symfony-route.yaml<CR>
@@ -74,7 +70,6 @@ set si "smart indent"
 set showtabline=2
 
 set visualbell
-set undolevels=9999999
 set history=2000
 set lazyredraw
 "numbers
@@ -94,6 +89,7 @@ map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 call plug#begin()
 " base
 Plug 'itchyny/lightline.vim'
+Plug 'tpope/vim-fugitive'
 Plug 'ap/vim-buftabline'
 Plug 'vim-utils/vim-interruptless'
 Plug 'sheerun/vim-polyglot'
@@ -102,15 +98,17 @@ Plug 'cloudhead/neovim-fuzzy'
 Plug 'kien/rainbow_parentheses.vim'
 Plug 'tpope/vim-commentary'
 Plug 'jrosiek/vim-mark'
-Plug 'ludovicchabant/vim-gutentags'
-Plug 'kshenoy/vim-signature'
 Plug 'mbbill/undotree'
+" Plug 'ludovicchabant/vim-gutentags'
+Plug 'kshenoy/vim-signature'
+
 Plug 'dyng/ctrlsf.vim'
 Plug 'w0rp/ale'
-
 " for learning vim
-Plug 'unblevable/quick-scope'
-Plug 'takac/vim-hardtime'
+" Plug 'unblevable/quick-scope'
+" Plug 'takac/vim-hardtime'
+
+Plug 'jeetsukumaran/vim-buffergator'
 
 " filesystem
 Plug 'justinmk/vim-dirvish'
@@ -118,13 +116,12 @@ Plug 'justinmk/vim-dirvish'
 " c/cpp
 Plug 'octol/vim-cpp-enhanced-highlight'
 " webdev
-Plug 'StanAngeloff/php.vim'
-Plug 'qbbr/vim-symfony'
-Plug 'nelsyeung/twig.vim'
+" Plug 'StanAngeloff/php.vim'
+" Plug 'qbbr/vim-symfony'
+" Plug 'nelsyeung/twig.vim'
 " colorschemes:
 Plug 'ympek/happy_hacking.vim'
 Plug 'fcpg/vim-fahrenheit'
-Plug 'terryma/vim-smooth-scroll'
 call plug#end()
 
 " regarding quick-scope plugin:
@@ -135,8 +132,20 @@ augroup qs_colors
 augroup END
 
 " look and feel
-colorscheme happy_hacking
-let g:lightline = { 'colorscheme': 'fahrenheit', }
+silent! colorscheme happy_hacking
+let g:lightline = {
+      \ 'colorscheme': 'fahrenheit',
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'gitbranch', 'readonly', 'filename', 'modified', 'hello' ] ]
+      \ },
+      \ 'component': {
+      \   'hello': 'gl&hf'
+      \ },
+      \ 'component_function': {
+      \   'gitbranch': 'FugitiveStatusline',
+      \ },
+      \ }
 set cursorline
 hi CursorLine cterm=NONE ctermbg=234
 set colorcolumn=120
@@ -144,11 +153,10 @@ hi ColorColumn cterm=NONE ctermbg=239
 hi BufTabLineCurrent ctermfg=047
 hi BufTabLineActive ctermfg=023
 
-
-nmap <leader>p :RainbowParenthesesToggleAll<CR>
-au Syntax * RainbowParenthesesLoadRound
-au Syntax * RainbowParenthesesLoadSquare
-au Syntax * RainbowParenthesesLoadBraces
+"nmap <leader>p :RainbowParenthesesToggleAll<CR>
+"au Syntax * RainbowParenthesesLoadRound
+"au Syntax * RainbowParenthesesLoadSquare
+"au Syntax * RainbowParenthesesLoadBraces
 
 let g:rbpt_colorpairs = [
     \ ['brown',       'RoyalBlue3'],
@@ -187,6 +195,8 @@ function! OpenOther()
 endfunction
 nmap <leader>a :call OpenOther()<CR>
 
+" do plikow linkera se zrobilem
+autocmd BufRead *.lcf set syntax=ld
 
 "remember the line I was on when I reopen a file
 autocmd BufReadPost *
@@ -201,17 +211,14 @@ let g:argwrap_line_prefix = ''
 " highlight ExtraWhitespace at end of line, remove them at save buffer ######################
 highlight ExtraWhitespace ctermbg=red guibg=red
 match ExtraWhitespace /\s\+$/
-autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
+" autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
+autocmd BufWinEnter * if @% != '__CtrlSF__' | match ExtraWhitespace /\s\+$/ | endif
 autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
 
 " remove unwanted whitespace from file
 nnoremap <leader>t :%s/\s\+$//e<CR>
-
-noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 0, 2)<CR>
-noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 0, 2)<CR>
-
 
 nmap     <C-F>f <Plug>CtrlSFPrompt
 vmap     <C-F>f <Plug>CtrlSFVwordPath
@@ -227,6 +234,15 @@ let g:ctrlsf_auto_close = {
     \ "compact": 0
     \}
 
+let g:ctrlsf_auto_focus = {
+    \ "at": "start"
+    \ }
+
+" use my own ignore file instead of our repo's gitignore.
+let g:ctrlsf_extra_backend_args = {
+    \ 'ag': '-p ~/.my_ignore -U'
+    \ }
+
 " persistent undo
 if !isdirectory($HOME."/.config/nvim/undodir")
     call mkdir($HOME."/.config/nvim/undodir", "p")
@@ -236,3 +252,9 @@ set undodir=~/.config/nvim/undodir
 set undofile
 set undolevels=99999 "maximum number of changes that can be undone
 set undoreload=10000 "maximum number lines to save for undo on a buffer reload
+
+" vim-buffergator uses <leader>b to BuffergatorOpen, i would like use it for
+" toggle.
+nnoremap <leader>b :BuffergatorToggle<CR>
+let g:buffergator_sort_regime='mru'
+let g:buffergator_autoupdate=1
