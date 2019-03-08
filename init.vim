@@ -4,37 +4,19 @@ filetype off                  " required
 imap jk <Esc>
 imap kj <Esc>
 nnoremap ; :
-
-set path+=**
-set wildmenu                " display all matching files when we tab complete
-
-set ignorecase
-set smartcase
-
 " mixed feelings about this maps, I invented them and they work 4 me but
 " remapping c-z? c'mon...
 nnoremap <c-x> :bnext<CR>
 nnoremap <c-z> :bprevious<CR>
 
-" leader maps
-let mapleader = "\<Space>"
-map <leader>o :echo expand("%:p") <CR>
-nnoremap <leader>z ^
-nnoremap <leader>w :vertical resize 100<CR>
-map <leader>s <C-w><C-w>
-map <leader>c :noh <CR>
-nnoremap <leader>g *<C-O>:%s///gn<CR>
+set path+=**
+set wildmenu                " display all matching files when we tab complete
+set ignorecase
+set smartcase
 
-" vanilla snippets!
-nnoremap <leader>Sr :-1read $HOME/.config/nvim/snippets/symfony-route.yaml<CR>
-
-" open new split panes to right and bottom, which feels more natural than Vim’s default
+" open new split panes to right and bottom, which feels more natural than Vimâ€™s default
 set splitbelow
 set splitright
-
-" tag file I usually have in main dir of project
-" ok this is default in nvim I guess
-set tags=./tags;
 
 " use only spaces to indent, 2 spaces per level
 set expandtab    " replace tabs with spaces
@@ -68,21 +50,20 @@ set autoindent
 set smarttab
 set si "smart indent"
 set showtabline=2
-
 set visualbell
 set history=2000
 set lazyredraw
-"numbers
-noremap <F2> :set number!<CR>
+
 noremap <F3> :set relativenumber!<CR>
 
-" stop arrow keys from typing A B C D
-map ^[OA <up>
-map ^[OB <Down>
-map ^[OD <left>
-map ^[OC <right>
+" NOTE: wyglada na to ze to wycina tez scrolla, tzn
+" scrollowanie uzywalo up/downetc pod spodem.
+" mouse=a zeby scrollowac teraz.
+map <up> <nop>
+map <Down> <nop>
+map <left> <nop>
+map <right> <nop>
 
-map <C-\> :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
 map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 
 " PLUGINS
@@ -92,12 +73,11 @@ Plug 'itchyny/lightline.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'ap/vim-buftabline'
 Plug 'vim-utils/vim-interruptless'
-Plug 'sheerun/vim-polyglot'
+" this is rather heavy plugin, comment this out
+" Plug 'sheerun/vim-polyglot'
 Plug 'osyo-manga/vim-brightest'
 Plug 'cloudhead/neovim-fuzzy'
-Plug 'kien/rainbow_parentheses.vim'
 Plug 'tpope/vim-commentary'
-Plug 'jrosiek/vim-mark'
 Plug 'mbbill/undotree'
 " Plug 'ludovicchabant/vim-gutentags'
 Plug 'kshenoy/vim-signature'
@@ -108,13 +88,23 @@ Plug 'w0rp/ale'
 " Plug 'unblevable/quick-scope'
 " Plug 'takac/vim-hardtime'
 
+" I can live without this one, I suppose. It's on way out.
 Plug 'jeetsukumaran/vim-buffergator'
 
+" testing new stuff
+" really fun, but heavy, I guess/.
+Plug 'vim-scripts/taglist.vim'
+Plug 'tpope/vim-surround'
+
 " filesystem
+" i dont use this one, TODO check if useful
+" after some juggling it's kinda OK, sometimes sluggish but....
 Plug 'justinmk/vim-dirvish'
 
 " c/cpp
 Plug 'octol/vim-cpp-enhanced-highlight'
+Plug 'vim-scripts/a.vim'
+
 " webdev
 " Plug 'StanAngeloff/php.vim'
 " Plug 'qbbr/vim-symfony'
@@ -122,6 +112,9 @@ Plug 'octol/vim-cpp-enhanced-highlight'
 " colorschemes:
 Plug 'ympek/happy_hacking.vim'
 Plug 'fcpg/vim-fahrenheit'
+Plug 'beikome/cosme.vim'
+
+Plug 'tweekmonster/startuptime.vim'
 call plug#end()
 
 " regarding quick-scope plugin:
@@ -133,6 +126,16 @@ augroup END
 
 " look and feel
 silent! colorscheme happy_hacking
+
+function! LightlineFilename()
+  let root = fnamemodify(get(b:, 'git_dir'), ':h')
+  let path = expand('%:p')
+  if path[:len(root)-1] ==# root
+    return path[len(root)+1:]
+  endif
+  return expand('%')
+endfunction
+
 let g:lightline = {
       \ 'colorscheme': 'fahrenheit',
       \ 'active': {
@@ -144,56 +147,20 @@ let g:lightline = {
       \ },
       \ 'component_function': {
       \   'gitbranch': 'FugitiveStatusline',
+      \   'filename': 'LightlineFilename',
       \ },
       \ }
 set cursorline
 hi CursorLine cterm=NONE ctermbg=234
 set colorcolumn=120
-hi ColorColumn cterm=NONE ctermbg=239
 hi BufTabLineCurrent ctermfg=047
 hi BufTabLineActive ctermfg=023
 
-"nmap <leader>p :RainbowParenthesesToggleAll<CR>
-"au Syntax * RainbowParenthesesLoadRound
-"au Syntax * RainbowParenthesesLoadSquare
-"au Syntax * RainbowParenthesesLoadBraces
-
-let g:rbpt_colorpairs = [
-    \ ['brown',       'RoyalBlue3'],
-    \ ['darkgray',    'DarkOrchid3'],
-    \ ['darkgreen',   'firebrick3'],
-    \ ['darkcyan',    'RoyalBlue3'],
-    \ ['darkred',     'SeaGreen3'],
-    \ ['darkmagenta', 'DarkOrchid3'],
-    \ ['brown',       'firebrick3'],
-    \ ['gray',        'RoyalBlue3'],
-    \ ['black',       'SeaGreen3'],
-    \ ['darkmagenta', 'DarkOrchid3'],
-    \ ['Darkblue',    'firebrick3'],
-    \ ['darkgreen',   'RoyalBlue3'],
-    \ ['darkcyan',    'SeaGreen3'],
-    \ ['darkred',     'DarkOrchid3'],
-    \ ['red',         'firebrick3'],
-    \ ]
-
 nnoremap <C-p> :FuzzyOpen<CR>
+
 if !has('gui_running')
   set t_Co=256
 endif
-
-
-" rename variable/fun etc in file
-nnoremap <silent><leader>R :%s/\<<c-r><c-w>\>//gI<c-f>$F/i
-
-" toggle between cpp and hpp file
-function! OpenOther()
-    if expand("%:e") == "cpp"
-        exe "edit" fnameescape(expand("%:p:r:s?src?include?").".hpp")
-    elseif expand("%:e") == "hpp"
-        exe "edit" fnameescape(expand("%:p:r:s?include?src?").".cpp")
-    endif
-endfunction
-nmap <leader>a :call OpenOther()<CR>
 
 " do plikow linkera se zrobilem
 autocmd BufRead *.lcf set syntax=ld
@@ -212,7 +179,7 @@ let g:argwrap_line_prefix = ''
 highlight ExtraWhitespace ctermbg=red guibg=red
 match ExtraWhitespace /\s\+$/
 " autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
-autocmd BufWinEnter * if @% != '__CtrlSF__' | match ExtraWhitespace /\s\+$/ | endif
+" (added: dont do it in CtrlSF cuz ugly )
 autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
@@ -253,8 +220,58 @@ set undofile
 set undolevels=99999 "maximum number of changes that can be undone
 set undoreload=10000 "maximum number lines to save for undo on a buffer reload
 
+" search for visually selected text LITERALLY
+vnoremap // y/\V<C-r>=escape(@",'/\')<CR><CR>
+" search for visually selected text as regex
+" vnoremap // y/<C-R>"<CR>
+
 " vim-buffergator uses <leader>b to BuffergatorOpen, i would like use it for
 " toggle.
 nnoremap <leader>b :BuffergatorToggle<CR>
 let g:buffergator_sort_regime='mru'
 let g:buffergator_autoupdate=1
+
+" remove insert mode maps which a.vim adds (i dont like them)
+autocmd VimEnter * iunmap <Leader>ihn
+autocmd VimEnter * iunmap <Leader>ih
+autocmd VimEnter * iunmap <Leader>is
+
+" hitting it too much when using CtrlSF so unmap this
+noremap <C-F> <Nop>
+
+let g:cpp_experimental_template_highlight = 1
+
+" leader maps
+let mapleader = "\<Space>"
+map <leader>o :echo expand("%:p") <CR>
+nnoremap <leader>w :vertical resize 100<CR>
+map <leader>s <C-w><C-w>
+map <leader>c :noh <CR>
+nnoremap <leader>g *<C-O>:%s///gn<CR>
+
+" rename variable/fun etc in file
+nnoremap <silent><leader>R :%s/\<<c-r><c-w>\>//gI<c-f>$F/i
+
+nmap <leader>a :A<CR>
+
+" time to tweak marks usage
+" list all GLOBAL MARKS
+nmap <leader>m :marks QWERTYUIOPASDFGHJKLZXCVBNM<CR>
+
+" tag list - testing new plugin
+let Tlist_GainFocus_On_ToggleOpen = 1
+let Tlist_WinWidth = 56
+nmap <leader>k :Tlist<CR>
+
+" vanilla snippets!
+" nnoremap <leader>Sr :-1read $HOME/.config/nvim/snippets/symfony-route.yaml<CR>
+
+function! ToggleMouse()
+  if &mouse == 'a'
+    set mouse=
+  else
+    set mouse=a
+  endif
+endfunc
+
+map <leader>q :call ToggleMouse()<CR>
