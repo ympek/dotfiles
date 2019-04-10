@@ -1,6 +1,8 @@
 set nocompatible              " be iMproved, required
 filetype off                  " required
 
+"set completeopt=menu,menuone,preview,noselect,noinsert
+
 imap jk <Esc>
 imap kj <Esc>
 nnoremap ; :
@@ -14,7 +16,10 @@ set wildmenu                " display all matching files when we tab complete
 set ignorecase
 set smartcase
 
-" open new split panes to right and bottom, which feels more natural than Vimâ€™s default
+" better visible line break
+set showbreak=>
+
+" open new split panes to right and bottom, which feels more natural than VimÃ¢â‚¬â„¢s default
 set splitbelow
 set splitright
 
@@ -22,6 +27,10 @@ set splitright
 set expandtab    " replace tabs with spaces
 set tabstop=2    " how many columns a tab counts for
 set shiftwidth=2 " control how many columns text is indented with
+
+" YOU NOT ALWAYS MIGHT WANT THIS, but
+" it helps with this_particular_function_name_convention
+" set iskeyword-=_
 
 " Tweaks for browsing
 let g:netrw_banner=0       " disable annoying banner
@@ -68,37 +77,37 @@ map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 
 " PLUGINS
 call plug#begin()
-" base
+" base/fav/superUseful
 Plug 'itchyny/lightline.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'ap/vim-buftabline'
 Plug 'vim-utils/vim-interruptless'
-" this is rather heavy plugin, comment this out
-" Plug 'sheerun/vim-polyglot'
 Plug 'osyo-manga/vim-brightest'
 Plug 'cloudhead/neovim-fuzzy'
-Plug 'tpope/vim-commentary'
-Plug 'mbbill/undotree'
-" Plug 'ludovicchabant/vim-gutentags'
 Plug 'kshenoy/vim-signature'
+Plug 'google/vim-searchindex'
+
+" z tym bede robic w wolnejchwili;
+" Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+" Plug 'sheerun/vim-polyglot'
+Plug 'tpope/vim-commentary'
+" not really using that one
+Plug 'mbbill/undotree'
 
 Plug 'dyng/ctrlsf.vim'
-Plug 'w0rp/ale'
+" Plug 'w0rp/ale'
 " for learning vim
 " Plug 'unblevable/quick-scope'
 " Plug 'takac/vim-hardtime'
-
-" I can live without this one, I suppose. It's on way out.
-Plug 'jeetsukumaran/vim-buffergator'
 
 " testing new stuff
 " really fun, but heavy, I guess/.
 Plug 'vim-scripts/taglist.vim'
 Plug 'tpope/vim-surround'
 
+" SPECIFIC PLUGINS
+
 " filesystem
-" i dont use this one, TODO check if useful
-" after some juggling it's kinda OK, sometimes sluggish but....
 Plug 'justinmk/vim-dirvish'
 
 " c/cpp
@@ -115,6 +124,13 @@ Plug 'fcpg/vim-fahrenheit'
 Plug 'beikome/cosme.vim'
 
 Plug 'tweekmonster/startuptime.vim'
+
+" Checking this one out
+Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
+
+"and this
+Plug 'lyuts/vim-rtags'
+
 call plug#end()
 
 " regarding quick-scope plugin:
@@ -140,7 +156,7 @@ let g:lightline = {
       \ 'colorscheme': 'fahrenheit',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'gitbranch', 'readonly', 'filename', 'modified', 'hello' ] ]
+      \             [ 'gitbranch', 'readonly', 'filename', 'modified', 'hello', 'cocstatus' ] ]
       \ },
       \ 'component': {
       \   'hello': 'gl&hf'
@@ -148,6 +164,7 @@ let g:lightline = {
       \ 'component_function': {
       \   'gitbranch': 'FugitiveStatusline',
       \   'filename': 'LightlineFilename',
+      \   'cocstatus': 'coc#status'
       \ },
       \ }
 set cursorline
@@ -161,6 +178,9 @@ nnoremap <C-p> :FuzzyOpen<CR>
 if !has('gui_running')
   set t_Co=256
 endif
+
+" fix annoying vim-commentary /* */
+autocmd FileType c,hpp,cpp,cs,java setlocal commentstring=//\ %s
 
 " do plikow linkera se zrobilem
 autocmd BufRead *.lcf set syntax=ld
@@ -227,9 +247,9 @@ vnoremap // y/\V<C-r>=escape(@",'/\')<CR><CR>
 
 " vim-buffergator uses <leader>b to BuffergatorOpen, i would like use it for
 " toggle.
-nnoremap <leader>b :BuffergatorToggle<CR>
-let g:buffergator_sort_regime='mru'
-let g:buffergator_autoupdate=1
+" nnoremap <leader>b :BuffergatorToggle<CR>
+" let g:buffergator_sort_regime='mru'
+" let g:buffergator_autoupdate=1
 
 " remove insert mode maps which a.vim adds (i dont like them)
 autocmd VimEnter * iunmap <Leader>ihn
@@ -243,16 +263,15 @@ let g:cpp_experimental_template_highlight = 1
 
 " leader maps
 let mapleader = "\<Space>"
-map <leader>o :echo expand("%:p") <CR>
+nmap <leader>a :A<CR>
+map <leader>c :noh <CR>
+nmap <leader>o :echo expand("%:p") <CR>
 nnoremap <leader>w :vertical resize 100<CR>
 map <leader>s <C-w><C-w>
-map <leader>c :noh <CR>
 nnoremap <leader>g *<C-O>:%s///gn<CR>
 
 " rename variable/fun etc in file
 nnoremap <silent><leader>R :%s/\<<c-r><c-w>\>//gI<c-f>$F/i
-
-nmap <leader>a :A<CR>
 
 " time to tweak marks usage
 " list all GLOBAL MARKS
@@ -275,3 +294,24 @@ function! ToggleMouse()
 endfunc
 
 map <leader>q :call ToggleMouse()<CR>
+
+map <leader>h :silent! 0Glog -10<CR>:bot copen<CR>0f.3w
+" git show hash under cursor :))
+map <leader>gs "gyiw:Git show <C-r>g<CR>
+" uhhh
+map <leader>bd :bp\|bd!<CR>
+
+" kinda messes up in fuzzyfinding.... bcuz it's termbuffer.
+" to be fixed.
+tnoremap q <C-\><C-n>:bd!<CR>
+
+" stop fugitive from polluting my buffer list
+autocmd BufReadPost fugitive://* set bufhidden=delete
+
+" let g:ale_linters = {
+" \   'cpp': ['ccls'],
+" \}
+
+nmap <leader>d <Plug>(coc-definition)
+nmap <leader>n <Plug>(coc-references)
+nn <silent> K :call CocActionAsync('doHover')<cr>
