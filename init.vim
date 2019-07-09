@@ -141,11 +141,17 @@ function! LightlineFilename()
   return expand('%')
 endfunction
 
+fun! ShowFuncName()
+  return getline(search("^[^ \t#/]\\{2}.*[^:]\s*$", 'bWn'))
+endfun
 let g:lightline = {
       \ 'colorscheme': 'fahrenheit',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'gitbranch', 'readonly', 'filename', 'modified', 'hello', 'cocstatus' ] ]
+      \             [ 'gitbranch', 'readonly', 'filename', 'modified', 'hello', 'cocstatus' ] ],
+      \
+      \   'right': [ [ 'lineinfo' ],
+      \              [ 'funcname' ] ],
       \ },
       \ 'component': {
       \   'hello': 'gl&hf'
@@ -153,7 +159,8 @@ let g:lightline = {
       \ 'component_function': {
       \   'gitbranch': 'FugitiveStatusline',
       \   'filename': 'LightlineFilename',
-      \   'cocstatus': 'coc#status'
+      \   'cocstatus': 'coc#status',
+      \   'funcname': 'ShowFuncName'
       \ },
       \ }
 set cursorline
