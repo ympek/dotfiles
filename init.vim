@@ -50,7 +50,7 @@ set showcmd                 " display incomplete commands
 set number
 set laststatus=2
 set hidden " keep files (buffers) open but dont display them
-set autoread
+" set autoread ( i dont like autoread that much )
 set hlsearch                " highlight searched text
 set incsearch               " do incremental searching
 set noswapfile
@@ -83,65 +83,54 @@ Plug 'tpope/vim-fugitive'
 Plug 'ap/vim-buftabline'
 Plug 'vim-utils/vim-interruptless'
 Plug 'osyo-manga/vim-brightest'
-Plug 'cloudhead/neovim-fuzzy'
 Plug 'kshenoy/vim-signature'
 Plug 'google/vim-searchindex'
-
-" z tym bede robic w wolnejchwili;
-" Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-" Plug 'sheerun/vim-polyglot'
-Plug 'tpope/vim-commentary'
-" not really using that one
-Plug 'mbbill/undotree'
-
 Plug 'dyng/ctrlsf.vim'
-" Plug 'w0rp/ale'
-" for learning vim
-" Plug 'unblevable/quick-scope'
-" Plug 'takac/vim-hardtime'
-
-" testing new stuff
-" really fun, but heavy, I guess/.
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
+Plug 'tpope/vim-commentary'
+Plug 'takac/vim-hardtime'
+Plug 'justinmk/vim-dirvish'
 Plug 'vim-scripts/taglist.vim'
 Plug 'tpope/vim-surround'
-
-" SPECIFIC PLUGINS
-
-" filesystem
-Plug 'justinmk/vim-dirvish'
+Plug 'neoclide/coc.nvim', { 'do': 'yarn install' }
 
 " c/cpp
 Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'vim-scripts/a.vim'
 
-" webdev
-" Plug 'StanAngeloff/php.vim'
-" Plug 'qbbr/vim-symfony'
-" Plug 'nelsyeung/twig.vim'
+if $YMPEK_HOME
+  Plug 'sheerun/vim-polyglot'
+  Plug 'alvan/vim-closetag'
+  Plug 'othree/html5.vim'
+  Plug 'pangloss/vim-javascript'
+  Plug 'mxw/vim-jsx'
+  Plug 'ympek/gruvbox'
+else
+  Plug 'lyuts/vim-rtags'
+endif
+
 " colorschemes:
 Plug 'ympek/happy_hacking.vim'
 Plug 'fcpg/vim-fahrenheit'
-Plug 'beikome/cosme.vim'
 
 Plug 'tweekmonster/startuptime.vim'
 
-" Checking this one out
-Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
-
-"and this
-Plug 'lyuts/vim-rtags'
-
 call plug#end()
 
-" regarding quick-scope plugin:
-augroup qs_colors
-  autocmd!
-  autocmd ColorScheme * highlight QuickScopePrimary ctermfg=155 cterm=underline
-  autocmd ColorScheme * highlight QuickScopeSecondary ctermfg=81 cterm=underline
-augroup END
+let g:buftabline_indicators=1
 
 " look and feel
-silent! colorscheme happy_hacking
+if $YMPEK_HOME
+  set termguicolors
+  let g:gruvbox_contrast_dark='hard'
+  let g:gruvbox_sign_column='bg0'
+  let g:gruvbox_bold=0
+  silent! colorscheme gruvbox
+else
+  silent! colorscheme happy_hacking
+  let g:hardtime_default_on = 1
+endif
 
 function! LightlineFilename()
   let root = fnamemodify(get(b:, 'git_dir'), ':h')
@@ -173,7 +162,7 @@ set colorcolumn=120
 hi BufTabLineCurrent ctermfg=047
 hi BufTabLineActive ctermfg=023
 
-nnoremap <C-p> :FuzzyOpen<CR>
+nnoremap <C-p> :Files<CR>
 
 if !has('gui_running')
   set t_Co=256
@@ -294,7 +283,6 @@ function! ToggleMouse()
 endfunc
 
 map <leader>q :call ToggleMouse()<CR>
-
 map <leader>h :silent! 0Glog -10<CR>:bot copen<CR>0f.3w
 " git show hash under cursor :))
 map <leader>gs "gyiw:Git show <C-r>g<CR>
@@ -303,7 +291,9 @@ map <leader>bd :bp\|bd!<CR>
 
 " kinda messes up in fuzzyfinding.... bcuz it's termbuffer.
 " to be fixed.
-tnoremap q <C-\><C-n>:bd!<CR>
+tnoremap qq <C-\><C-n>:bd!<CR>
+tnoremap jk <C-\><C-n>
+tnoremap kj <C-\><C-n>
 
 " stop fugitive from polluting my buffer list
 autocmd BufReadPost fugitive://* set bufhidden=delete
@@ -315,3 +305,16 @@ autocmd BufReadPost fugitive://* set bufhidden=delete
 nmap <leader>d <Plug>(coc-definition)
 nmap <leader>n <Plug>(coc-references)
 nn <silent> K :call CocActionAsync('doHover')<cr>
+
+" webdev again
+let g:html_indent_script1 = "inc" 
+let g:html_indent_style1 = "inc" 
+
+" annoying on thinkpad
+map <PageDown> <Nop>
+map <PageUp> <Nop>
+map <CapsLock> <Nop>
+
+" ok, tab is superior to inconvienient vim defaults when dealing with completion.
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<Tab>"
