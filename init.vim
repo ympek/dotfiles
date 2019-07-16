@@ -11,6 +11,12 @@ nnoremap ; :
 nnoremap <c-x> :bnext<CR>
 nnoremap <c-z> :bprevious<CR>
 
+" switching between splits
+nnoremap sw <C-w><C-k>
+nnoremap ss <C-w><C-j>
+nnoremap sa <C-w><C-h>
+nnoremap sd <C-w><C-l>
+
 set path+=**
 set wildmenu                " display all matching files when we tab complete
 set ignorecase
@@ -47,7 +53,6 @@ syntax on
 set encoding=utf-8
 set backspace=2
 set showcmd                 " display incomplete commands
-set number
 set laststatus=2
 set hidden " keep files (buffers) open but dont display them
 " set autoread ( i dont like autoread that much )
@@ -63,7 +68,11 @@ set visualbell
 set history=2000
 set lazyredraw
 
+set nonumber
 noremap <F3> :set relativenumber!<CR>
+noremap <F2> :set number!<CR>
+
+set signcolumn=yes
 
 " NOTE: wyglada na to ze to wycina tez scrolla, tzn
 " scrollowanie uzywalo up/downetc pod spodem.
@@ -75,6 +84,13 @@ map <right> <nop>
 
 map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 
+" let g:ctrlsf_ackprg = 'rg'
+
+let g:brightest#highlight = {
+      \	"group"    : "BrightestHl",
+      \}
+
+let g:vimwiki_list = [{'path':'~/.vimwiki/wiki', 'path_html':'~/public_html/vimwiki/'}]
 " PLUGINS
 call plug#begin()
 " base/fav/superUseful
@@ -89,7 +105,7 @@ Plug 'dyng/ctrlsf.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-commentary'
-Plug 'takac/vim-hardtime'
+" Plug 'takac/vim-hardtime'
 Plug 'justinmk/vim-dirvish'
 Plug 'vim-scripts/taglist.vim'
 Plug 'tpope/vim-surround'
@@ -114,9 +130,21 @@ endif
 Plug 'ympek/happy_hacking.vim'
 Plug 'fcpg/vim-fahrenheit'
 
+Plug 'liuchengxu/vista.vim'
+Plug 'vimwiki/vimwiki'
 Plug 'tweekmonster/startuptime.vim'
 
 call plug#end()
+
+function! NearestMethodOrFunction() abort
+  return get(b:, 'vista_nearest_method_or_function', '')
+endfunction
+
+" By default vista.vim never run if you don't call it explicitly.
+"
+" If you want to show the nearest function in your statusline automatically,
+" you can add the following line to your vimrc
+autocmd VimEnter * call vista#RunForNearestMethodOrFunction()
 
 let g:buftabline_indicators=1
 
@@ -129,7 +157,7 @@ if $YMPEK_HOME
   silent! colorscheme gruvbox
 else
   silent! colorscheme happy_hacking
-  let g:hardtime_default_on = 1
+  " let g:hardtime_default_on = 1
 endif
 
 function! LightlineFilename()
@@ -151,7 +179,7 @@ let g:lightline = {
       \             [ 'gitbranch', 'readonly', 'filename', 'modified', 'hello', 'cocstatus' ] ],
       \
       \   'right': [ [ 'lineinfo' ],
-      \              [ 'funcname' ] ],
+      \              [ 'method' ] ],
       \ },
       \ 'component': {
       \   'hello': 'gl&hf'
@@ -160,7 +188,8 @@ let g:lightline = {
       \   'gitbranch': 'FugitiveStatusline',
       \   'filename': 'LightlineFilename',
       \   'cocstatus': 'coc#status',
-      \   'funcname': 'ShowFuncName'
+      \   'funcname': 'ShowFuncName',
+      \   'method': 'NearestMethodOrFunction'
       \ },
       \ }
 set cursorline
@@ -168,8 +197,9 @@ hi CursorLine cterm=NONE ctermbg=234
 set colorcolumn=120
 hi BufTabLineCurrent ctermfg=047
 hi BufTabLineActive ctermfg=023
+hi SignatureMarkText ctermfg=112
 
-nnoremap <C-p> :Files<CR>
+nnoremap <C-p> :GitFiles<CR>
 
 if !has('gui_running')
   set t_Co=256
@@ -325,3 +355,5 @@ map <CapsLock> <Nop>
 " ok, tab is superior to inconvienient vim defaults when dealing with completion.
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<Tab>"
+
+let g:alternateSearchPath = 'sfr:../source,sfr:../src,sfr:../include,sfr:../inc,sfr:../Include,sfr:../Source'
