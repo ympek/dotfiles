@@ -1,13 +1,7 @@
-set nocompatible              " be iMproved, required
-filetype off                  " required
-
-"set completeopt=menu,menuone,preview,noselect,noinsert
-
 imap jk <Esc>
 imap kj <Esc>
 nnoremap ; :
-" mixed feelings about this maps, I invented them and they work 4 me but
-" remapping c-z? c'mon...
+
 nnoremap <c-x> :bnext<CR>
 nnoremap <c-z> :bprevious<CR>
 
@@ -17,15 +11,16 @@ nnoremap ss <C-w><C-j>
 nnoremap sa <C-w><C-h>
 nnoremap sd <C-w><C-l>
 
+set nonumber
 set path+=**
-set wildmenu                " display all matching files when we tab complete
+set wildmenu
 set ignorecase
 set smartcase
 
 " better visible line break
 set showbreak=>
 
-" open new split panes to right and bottom, which feels more natural than VimÃ¢â‚¬â„¢s default
+" open new split panes to right and bottom
 set splitbelow
 set splitright
 
@@ -43,6 +38,7 @@ let g:netrw_banner=0       " disable annoying banner
 let g:netrw_browse_split=4 " open in prior window
 let g:netrw_altv=1         " open splits to the right
 let g:netrw_liststyle=3    " tree view
+let g:netrw_winsize = 25
 " Per default, netrw leaves unmodified buffers open. This autocommand
 " deletes netrw's buffer once it's hidden (using ':q', for example)
 autocmd FileType netrw setl bufhidden=delete
@@ -50,7 +46,6 @@ autocmd FileType netrw setl bufhidden=delete
 set clipboard=unnamed
 
 syntax on
-set encoding=utf-8
 set backspace=2
 set showcmd                 " display incomplete commands
 set laststatus=2
@@ -67,30 +62,27 @@ set showtabline=2
 set visualbell
 set history=2000
 set lazyredraw
+set signcolumn=yes
 
-set nonumber
 noremap <F3> :set relativenumber!<CR>
 noremap <F2> :set number!<CR>
 
-set signcolumn=yes
-
-" NOTE: wyglada na to ze to wycina tez scrolla, tzn
-" scrollowanie uzywalo up/downetc pod spodem.
-" mouse=a zeby scrollowac teraz.
+" use hjkl my friend
 map <up> <nop>
-map <Down> <nop>
+map <down> <nop>
 map <left> <nop>
 map <right> <nop>
-
-map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
-
-" let g:ctrlsf_ackprg = 'rg'
+" annoying on thinkpad
+map <PageDown> <Nop>
+map <PageUp> <Nop>
+map <CapsLock> <Nop>
 
 let g:brightest#highlight = {
       \	"group"    : "BrightestHl",
       \}
 
 let g:vimwiki_list = [{'path':'~/.vimwiki/wiki', 'path_html':'~/public_html/vimwiki/'}]
+
 " PLUGINS
 call plug#begin()
 " base/fav/superUseful
@@ -105,7 +97,6 @@ Plug 'dyng/ctrlsf.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-commentary'
-" Plug 'takac/vim-hardtime'
 Plug 'justinmk/vim-dirvish'
 Plug 'vim-scripts/taglist.vim'
 Plug 'tpope/vim-surround'
@@ -122,6 +113,7 @@ if $YMPEK_HOME
   Plug 'pangloss/vim-javascript'
   Plug 'mxw/vim-jsx'
   Plug 'ympek/gruvbox'
+  Plug 'chrisbra/Colorizer'
 else
   Plug 'lyuts/vim-rtags'
 endif
@@ -136,6 +128,8 @@ Plug 'tweekmonster/startuptime.vim'
 
 call plug#end()
 
+map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
+
 function! NearestMethodOrFunction() abort
   return get(b:, 'vista_nearest_method_or_function', '')
 endfunction
@@ -148,16 +142,17 @@ autocmd VimEnter * call vista#RunForNearestMethodOrFunction()
 
 let g:buftabline_indicators=1
 
+let g:closetag_filenames = '*.html,*.xhtml,*.phtml,*.php,*.html.twig,*.twig'
+
 " look and feel
 if $YMPEK_HOME
-  set termguicolors
-  let g:gruvbox_contrast_dark='hard'
+  " set termguicolors
+  let g:gruvbox_contrast_dark='soft'
   let g:gruvbox_sign_column='bg0'
   let g:gruvbox_bold=0
   silent! colorscheme gruvbox
 else
   silent! colorscheme happy_hacking
-  " let g:hardtime_default_on = 1
 endif
 
 function! LightlineFilename()
@@ -195,18 +190,27 @@ let g:lightline = {
 set cursorline
 hi CursorLine cterm=NONE ctermbg=234
 set colorcolumn=120
-hi BufTabLineCurrent ctermfg=047
-hi BufTabLineActive ctermfg=023
-hi SignatureMarkText ctermfg=112
+hi BufTabLineCurrent ctermfg=052
+hi BufTabLineActive ctermfg=217
+hi SignatureMarkText ctermfg=162
 
-nnoremap <C-p> :GitFiles<CR>
+
+if $YMPEK_HOME
+  nnoremap <C-p> :Files<CR>
+else
+  nnoremap <C-p> :GitFiles<CR>
+endif
+
+let g:brightest#highlight = {
+      \	"group"    : "BrightestHl",
+      \}
 
 if !has('gui_running')
   set t_Co=256
 endif
 
 " fix annoying vim-commentary /* */
-autocmd FileType c,hpp,cpp,cs,java setlocal commentstring=//\ %s
+autocmd FileType c,hpp,cpp,cs,java,php setlocal commentstring=//\ %s
 
 " do plikow linkera se zrobilem
 autocmd BufRead *.lcf set syntax=ld
@@ -216,10 +220,6 @@ autocmd BufReadPost *
       \ if line("'\"") > 0 && line("'\"") <= line("$") |
       \ exe "normal! g`\"" |
       \ endif
-
-let g:netrw_sort_by='time'
-let g:netrw_sort_direction='reverse'
-let g:argwrap_line_prefix = ''
 
 " highlight ExtraWhitespace at end of line, remove them at save buffer ######################
 highlight ExtraWhitespace ctermbg=red guibg=red
@@ -292,7 +292,7 @@ let mapleader = "\<Space>"
 nmap <leader>a :A<CR>
 map <leader>c :noh <CR>
 nmap <leader>o :echo expand("%:p") <CR>
-nnoremap <leader>w :vertical resize 100<CR>
+nnoremap <leader>w :vertical resize 160<CR>
 map <leader>s <C-w><C-w>
 nnoremap <leader>g *<C-O>:%s///gn<CR>
 
@@ -335,25 +335,19 @@ tnoremap kj <C-\><C-n>
 " stop fugitive from polluting my buffer list
 autocmd BufReadPost fugitive://* set bufhidden=delete
 
-" let g:ale_linters = {
-" \   'cpp': ['ccls'],
-" \}
-
 nmap <leader>d <Plug>(coc-definition)
 nmap <leader>n <Plug>(coc-references)
 nn <silent> K :call CocActionAsync('doHover')<cr>
 
 " webdev again
-let g:html_indent_script1 = "inc" 
-let g:html_indent_style1 = "inc" 
-
-" annoying on thinkpad
-map <PageDown> <Nop>
-map <PageUp> <Nop>
-map <CapsLock> <Nop>
+let g:html_indent_script1 = "inc"
+let g:html_indent_style1 = "inc"
 
 " ok, tab is superior to inconvienient vim defaults when dealing with completion.
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<Tab>"
 
 let g:alternateSearchPath = 'sfr:../source,sfr:../src,sfr:../include,sfr:../inc,sfr:../Include,sfr:../Source'
+
+" neovim 4.0 has floating wildmenu. I don't really love it.
+set wildoptions-=pum
