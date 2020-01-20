@@ -36,7 +36,7 @@ set shiftwidth=2 " control how many columns text is indented with
 
 " YOU NOT ALWAYS MIGHT WANT THIS, but
 " it helps with this_particular_function_name_convention
-" set iskeyword-=_
+set iskeyword-=ABCDEFGHIJKLMNOPQRSTUWVXZ
 
 " Tweaks for browsing
 let g:netrw_banner=0       " disable annoying banner
@@ -84,7 +84,7 @@ map <right> <nop>
 
 map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 
-" let g:ctrlsf_ackprg = 'rg'
+let g:ctrlsf_ackprg = 'ag'
 
 let g:brightest#highlight = {
       \	"group"    : "BrightestHl",
@@ -92,7 +92,7 @@ let g:brightest#highlight = {
 
 let g:vimwiki_list = [{'path':'~/.vimwiki/wiki', 'path_html':'~/public_html/vimwiki/'}]
 " PLUGINS
-call plug#begin()
+call plug#begin('/var/fpwork/sniemiec/plugged')
 " base/fav/superUseful
 Plug 'itchyny/lightline.vim'
 Plug 'tpope/vim-fugitive'
@@ -134,7 +134,13 @@ Plug 'liuchengxu/vista.vim'
 Plug 'vimwiki/vimwiki'
 Plug 'tweekmonster/startuptime.vim'
 
+" testing this one
+Plug 'zackhsi/fzf-tags'
+
+Plug 'liuchengxu/vim-clap'
+
 call plug#end()
+
 
 function! NearestMethodOrFunction() abort
   return get(b:, 'vista_nearest_method_or_function', '')
@@ -182,7 +188,8 @@ let g:lightline = {
       \              [ 'method' ] ],
       \ },
       \ 'component': {
-      \   'hello': 'gl&hf'
+      \   'hello': 'gl&hf',
+      \   'lineinfo': ' %3l/%3L:%-2v',
       \ },
       \ 'component_function': {
       \   'gitbranch': 'FugitiveStatusline',
@@ -261,7 +268,7 @@ if !isdirectory($HOME."/.config/nvim/undodir")
     call mkdir($HOME."/.config/nvim/undodir", "p")
 endif
 
-set undodir=~/.config/nvim/undodir
+set undodir=/var/fpwork/sniemiec/undodir
 set undofile
 set undolevels=99999 "maximum number of changes that can be undone
 set undoreload=10000 "maximum number lines to save for undo on a buffer reload
@@ -322,7 +329,8 @@ endfunc
 map <leader>q :call ToggleMouse()<CR>
 map <leader>h :silent! 0Glog -10<CR>:bot copen<CR>0f.3w
 " git show hash under cursor :))
-map <leader>gs "gyiw:Git show <C-r>g<CR>
+" map <leader>gs "gyiw:Git show <C-r>g<CR>
+map <leader>gs "gyiw:vsp term://git show <C-r>g<CR>
 " uhhh
 map <leader>bd :bp\|bd!<CR>
 
@@ -343,9 +351,11 @@ nmap <leader>d <Plug>(coc-definition)
 nmap <leader>n <Plug>(coc-references)
 nn <silent> K :call CocActionAsync('doHover')<cr>
 
+nmap <leader>z <Plug>(fzf_tags)
+
 " webdev again
-let g:html_indent_script1 = "inc" 
-let g:html_indent_style1 = "inc" 
+let g:html_indent_script1 = "inc"
+let g:html_indent_style1 = "inc"
 
 " annoying on thinkpad
 map <PageDown> <Nop>
@@ -357,3 +367,11 @@ inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<Tab>"
 
 let g:alternateSearchPath = 'sfr:../source,sfr:../src,sfr:../include,sfr:../inc,sfr:../Include,sfr:../Source'
+let g:alternateNoDefaultAlternate=1
+
+
+" Preview effects of :%s as you type
+set inccommand=nosplit
+
+" neovim 4.0 has floating wildmenu. I don't really love it.
+set wildoptions-=pum

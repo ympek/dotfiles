@@ -1,0 +1,164 @@
+set nocompatible              " be iMproved, required
+filetype off                  " required
+
+"set completeopt=menu,menuone,preview,noselect,noinsert
+
+imap jk <Esc>
+imap kj <Esc>
+nnoremap ; :
+" mixed feelings about this maps, I invented them and they work 4 me but
+" remapping c-z? c'mon...
+nnoremap <c-x> :bnext<CR>
+nnoremap <c-z> :bprevious<CR>
+
+" switching between splits
+nnoremap sw <C-w><C-k>
+nnoremap ss <C-w><C-j>
+nnoremap sa <C-w><C-h>
+nnoremap sd <C-w><C-l>
+
+set path+=**
+set wildmenu                " display all matching files when we tab complete
+set ignorecase
+set smartcase
+
+" better visible line break
+set showbreak=>
+
+" open new split panes to right and bottom, which feels more natural than VimÃ¢â‚¬â„¢s default
+set splitbelow
+set splitright
+
+" use only spaces to indent, 2 spaces per level
+set expandtab    " replace tabs with spaces
+set tabstop=2    " how many columns a tab counts for
+set shiftwidth=2 " control how many columns text is indented with
+
+" YOU NOT ALWAYS MIGHT WANT THIS, but
+" it helps with this_particular_function_name_convention
+set iskeyword-=ABCDEFGHIJKLMNOPQRSTUWVXZ
+
+" Tweaks for browsing
+let g:netrw_banner=0       " disable annoying banner
+let g:netrw_browse_split=4 " open in prior window
+let g:netrw_altv=1         " open splits to the right
+let g:netrw_liststyle=3    " tree view
+" Per default, netrw leaves unmodified buffers open. This autocommand
+" deletes netrw's buffer once it's hidden (using ':q', for example)
+autocmd FileType netrw setl bufhidden=delete
+
+set clipboard=unnamed
+
+syntax on
+set encoding=utf-8
+set backspace=2
+set showcmd                 " display incomplete commands
+set laststatus=2
+set hidden " keep files (buffers) open but dont display them
+" set autoread ( i dont like autoread that much )
+set hlsearch                " highlight searched text
+set incsearch               " do incremental searching
+set noswapfile
+set ruler                   " show the cursor position all the time
+set autoindent
+set smarttab
+set si "smart indent"
+set showtabline=2
+set visualbell
+set history=2000
+set lazyredraw
+
+set nonumber
+noremap <F3> :set relativenumber!<CR>
+noremap <F2> :set number!<CR>
+
+" NOTE: wyglada na to ze to wycina tez scrolla, tzn
+" scrollowanie uzywalo up/downetc pod spodem.
+" mouse=a zeby scrollowac teraz.
+map <up> <nop>
+map <Down> <nop>
+map <left> <nop>
+map <right> <nop>
+
+map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
+
+silent! colorscheme happy_hacking
+set cursorline
+hi CursorLine cterm=NONE ctermbg=234
+set colorcolumn=120
+
+if !has('gui_running')
+  set t_Co=256
+endif
+
+autocmd BufRead *.lcf set syntax=ld
+
+"remember the line I was on when I reopen a file
+autocmd BufReadPost *
+      \ if line("'\"") > 0 && line("'\"") <= line("$") |
+      \ exe "normal! g`\"" |
+      \ endif
+
+let g:netrw_sort_by='time'
+let g:netrw_sort_direction='reverse'
+let g:argwrap_line_prefix = ''
+
+" highlight ExtraWhitespace at end of line, remove them at save buffer ######################
+highlight ExtraWhitespace ctermbg=red guibg=red
+match ExtraWhitespace /\s\+$/
+" autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
+" (added: dont do it in CtrlSF cuz ugly )
+autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
+autocmd InsertLeave * match ExtraWhitespace /\s\+$/
+autocmd BufWinLeave * call clearmatches()
+
+" remove unwanted whitespace from file
+nnoremap <leader>t :%s/\s\+$//e<CR>
+
+set undofile
+set undolevels=99999 "maximum number of changes that can be undone
+set undoreload=10000 "maximum number lines to save for undo on a buffer reload
+
+" search for visually selected text LITERALLY
+vnoremap // y/\V<C-r>=escape(@",'/\')<CR><CR>
+" search for visually selected text as regex
+" vnoremap // y/<C-R>"<CR>
+
+noremap <C-F> <Nop>
+
+" leader maps
+let mapleader = "\<Space>"
+map <leader>c :noh <CR>
+nmap <leader>o :echo expand("%:p") <CR>
+nnoremap <leader>w :vertical resize 100<CR>
+map <leader>s <C-w><C-w>
+nnoremap <leader>g *<C-O>:%s///gn<CR>
+
+" rename variable/fun etc in file
+nnoremap <silent><leader>R :%s/\<<c-r><c-w>\>//gI<c-f>$F/i
+
+" list all GLOBAL MARKS
+nmap <leader>m :marks QWERTYUIOPASDFGHJKLZXCVBNM<CR>
+
+
+" vanilla snippets!
+" nnoremap <leader>Sr :-1read $HOME/.config/nvim/snippets/symfony-route.yaml<CR>
+
+function! ToggleMouse()
+  if &mouse == 'a'
+    set mouse=
+  else
+    set mouse=a
+  endif
+endfunc
+
+map <leader>q :call ToggleMouse()<CR>
+
+" annoying on thinkpad
+map <PageDown> <Nop>
+map <PageUp> <Nop>
+map <CapsLock> <Nop>
+
+" ok, tab is superior to inconvienient vim defaults when dealing with completion.
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<Tab>"
