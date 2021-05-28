@@ -17,6 +17,9 @@ set wildmenu
 set ignorecase
 set smartcase
 
+" it's in my statusline!
+set noshowmode
+
 " better visible line break
 set showbreak=>
 
@@ -77,10 +80,6 @@ map <PageDown> <Nop>
 map <PageUp> <Nop>
 map <CapsLock> <Nop>
 
-let g:brightest#highlight = {
-      \	"group"    : "BrightestHl",
-      \}
-
 let g:vimwiki_list = [{'path':'~/.vimwiki/wiki', 'path_html':'~/public_html/vimwiki/'}]
 
 " PLUGINS
@@ -106,25 +105,23 @@ Plug 'neoclide/coc.nvim', { 'do': 'yarn install' }
 Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'vim-scripts/a.vim'
 
-if $YMPEK_HOME
-  Plug 'sheerun/vim-polyglot'
-  Plug 'alvan/vim-closetag'
-  Plug 'othree/html5.vim'
-  Plug 'pangloss/vim-javascript'
-  Plug 'mxw/vim-jsx'
-  Plug 'ympek/gruvbox'
-  Plug 'chrisbra/Colorizer'
-else
-  Plug 'lyuts/vim-rtags'
-endif
+" web
+Plug 'sheerun/vim-polyglot'
+Plug 'alvan/vim-closetag'
+Plug 'othree/html5.vim'
+Plug 'pangloss/vim-javascript'
+Plug 'mxw/vim-jsx'
+Plug 'chrisbra/Colorizer'
 
 " colorschemes:
 Plug 'ympek/happy_hacking.vim'
 Plug 'fcpg/vim-fahrenheit'
+Plug 'cocopon/iceberg.vim'
 
 Plug 'liuchengxu/vista.vim'
-Plug 'vimwiki/vimwiki'
 Plug 'tweekmonster/startuptime.vim'
+" dont mess up my layout
+Plug 'orlp/vim-bunlink'
 
 call plug#end()
 
@@ -144,16 +141,8 @@ let g:buftabline_indicators=1
 
 let g:closetag_filenames = '*.html,*.xhtml,*.phtml,*.php,*.html.twig,*.twig'
 
-" look and feel
-if $YMPEK_HOME
-  " set termguicolors
-  let g:gruvbox_contrast_dark='soft'
-  let g:gruvbox_sign_column='bg0'
-  let g:gruvbox_bold=0
-  silent! colorscheme gruvbox
-else
-  silent! colorscheme happy_hacking
-endif
+" silent! colorscheme happy_hacking
+silent! colorscheme iceberg
 
 function! LightlineFilename()
   let root = fnamemodify(get(b:, 'git_dir'), ':h')
@@ -168,7 +157,7 @@ fun! ShowFuncName()
   return getline(search("^[^ \t#/]\\{2}.*[^:]\s*$", 'bWn'))
 endfun
 let g:lightline = {
-      \ 'colorscheme': 'fahrenheit',
+      \ 'colorscheme': 'iceberg',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
       \             [ 'gitbranch', 'readonly', 'filename', 'modified', 'hello', 'cocstatus' ] ],
@@ -177,7 +166,7 @@ let g:lightline = {
       \              [ 'method' ] ],
       \ },
       \ 'component': {
-      \   'hello': 'gl&hf'
+      \   'hello': 'jedziesz'
       \ },
       \ 'component_function': {
       \   'gitbranch': 'FugitiveStatusline',
@@ -190,16 +179,13 @@ let g:lightline = {
 set cursorline
 hi CursorLine cterm=NONE ctermbg=234
 set colorcolumn=120
-hi BufTabLineCurrent ctermfg=052
+hi BufTabLineCurrent ctermfg=204
 hi BufTabLineActive ctermfg=217
 hi SignatureMarkText ctermfg=162
+hi BrightestHl cterm=NONE ctermbg=239
 
-
-if $YMPEK_HOME
-  nnoremap <C-p> :Files<CR>
-else
-  nnoremap <C-p> :GitFiles<CR>
-endif
+" or GitFiles
+nnoremap <C-p> :Files<CR>
 
 let g:brightest#highlight = {
       \	"group"    : "BrightestHl",
@@ -293,6 +279,7 @@ nmap <leader>a :A<CR>
 map <leader>c :noh <CR>
 nmap <leader>o :echo expand("%:p") <CR>
 nnoremap <leader>w :vertical resize 160<CR>
+nnoremap <leader>l :set wrap!<CR>
 map <leader>s <C-w><C-w>
 nnoremap <leader>g *<C-O>:%s///gn<CR>
 
@@ -325,6 +312,9 @@ map <leader>h :silent! 0Glog -10<CR>:bot copen<CR>0f.3w
 map <leader>gs "gyiw:Git show <C-r>g<CR>
 " uhhh
 map <leader>bd :bp\|bd!<CR>
+" leader maps for closing buffers 
+nnoremap <silent> <leader>x :Bunlink<CR>
+nnoremap <silent> <leader>X :Bunlink!<CR>
 
 " kinda messes up in fuzzyfinding.... bcuz it's termbuffer.
 " to be fixed.
