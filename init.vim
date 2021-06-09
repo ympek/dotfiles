@@ -106,10 +106,10 @@ Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'vim-scripts/a.vim'
 
 " web
-Plug 'sheerun/vim-polyglot'
+" Plug 'sheerun/vim-polyglot'
 Plug 'alvan/vim-closetag'
 Plug 'othree/html5.vim'
-Plug 'pangloss/vim-javascript'
+" Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
 Plug 'chrisbra/Colorizer'
 
@@ -122,6 +122,12 @@ Plug 'liuchengxu/vista.vim'
 Plug 'tweekmonster/startuptime.vim'
 " dont mess up my layout
 Plug 'orlp/vim-bunlink'
+
+" testing new stuff
+Plug 'marcushwz/nvim-workbench'
+Plug 'glts/vim-magnum'
+Plug 'glts/vim-radical'
+" Plug 'bfredl/nvim-miniyank'
 
 call plug#end()
 
@@ -324,6 +330,8 @@ tnoremap kj <C-\><C-n>
 
 " stop fugitive from polluting my buffer list
 autocmd BufReadPost fugitive://* set bufhidden=delete
+" same for workbench?/todolist
+autocmd BufReadPost workbench.md set bufhidden=delete
 
 nmap <leader>d <Plug>(coc-definition)
 nmap <leader>n <Plug>(coc-references)
@@ -341,3 +349,17 @@ let g:alternateSearchPath = 'sfr:../source,sfr:../src,sfr:../include,sfr:../inc,
 
 " neovim 4.0 has floating wildmenu. I don't really love it.
 set wildoptions-=pum
+
+" Below are my personal key mappings
+" <Plug>ToggleProjectWorkbench let you toggle project specific workbench
+nmap <leader>\ <Plug>ToggleProjectWorkbench
+
+" <Plug>WorkbenchToggleCheckbox allows you to add/toggle the checkbox
+" - testing -> - [ ] testing
+" - [ ] testing -> - [x] testing
+" - [x] testing -> - [ ] testing
+nmap <leader><CR> <Plug>WorkbenchToggleCheckbox
+let g:workbench_storage_path = "/home/ympek/notes"
+
+" im not convinced yet but...
+nnoremap <silent> <leader>p  :<C-u>CocList -A --normal yank<cr>
