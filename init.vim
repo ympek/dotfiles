@@ -46,7 +46,7 @@ let g:netrw_winsize = 25
 " deletes netrw's buffer once it's hidden (using ':q', for example)
 autocmd FileType netrw setl bufhidden=delete
 
-set clipboard=unnamed
+set clipboard=unnamedplus
 
 syntax on
 set backspace=2
@@ -124,10 +124,12 @@ Plug 'tweekmonster/startuptime.vim'
 Plug 'orlp/vim-bunlink'
 
 " testing new stuff
+Plug 'liuchengxu/vim-clap', { 'do': { -> clap#installer#force_download() } }
 Plug 'marcushwz/nvim-workbench'
 Plug 'glts/vim-magnum'
 Plug 'glts/vim-radical'
 " Plug 'bfredl/nvim-miniyank'
+ Plug 'voldikss/vim-floaterm'
 
 call plug#end()
 
@@ -191,7 +193,7 @@ hi SignatureMarkText ctermfg=162
 hi BrightestHl cterm=NONE ctermbg=239
 
 " or GitFiles
-nnoremap <C-p> :Files<CR>
+nnoremap <C-p> :GitFiles<CR>
 
 let g:brightest#highlight = {
       \	"group"    : "BrightestHl",
@@ -315,7 +317,7 @@ endfunc
 map <leader>q :call ToggleMouse()<CR>
 map <leader>h :silent! 0Glog -10<CR>:bot copen<CR>0f.3w
 " git show hash under cursor :))
-map <leader>gs "gyiw:Git show <C-r>g<CR>
+map <leader>gs "gyiw:FloatermNew! git show <C-r>g<CR>
 " uhhh
 map <leader>bd :bp\|bd!<CR>
 " leader maps for closing buffers 
@@ -359,7 +361,7 @@ nmap <leader>\ <Plug>ToggleProjectWorkbench
 " - [ ] testing -> - [x] testing
 " - [x] testing -> - [ ] testing
 nmap <leader><CR> <Plug>WorkbenchToggleCheckbox
-let g:workbench_storage_path = "/home/ympek/notes"
+let g:workbench_storage_path = "/home/ympek/notes/"
 
 " im not convinced yet but...
 nnoremap <silent> <leader>p  :<C-u>CocList -A --normal yank<cr>
