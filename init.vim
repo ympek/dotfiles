@@ -81,7 +81,6 @@ map <PageUp> <Nop>
 map <CapsLock> <Nop>
 
 let g:vimwiki_list = [{'path':'~/.vimwiki/wiki', 'path_html':'~/public_html/vimwiki/'}]
-
 " PLUGINS
 call plug#begin()
 " base/fav/superUseful
@@ -224,8 +223,6 @@ autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
 
-" remove unwanted whitespace from file
-nnoremap <leader>t :%s/\s\+$//e<CR>
 
 nmap     <C-F>f <Plug>CtrlSFPrompt
 vmap     <C-F>f <Plug>CtrlSFVwordPath
@@ -314,14 +311,16 @@ function! ToggleMouse()
   endif
 endfunc
 
+nnoremap <leader>t :FloatermNew<CR>
+
 map <leader>q :call ToggleMouse()<CR>
 map <leader>h :silent! 0Glog -10<CR>:bot copen<CR>0f.3w
 " git show hash under cursor :))
 map <leader>gs "gyiw:FloatermNew! git show <C-r>g<CR>
 " uhhh
 map <leader>bd :bp\|bd!<CR>
+" leader maps for closing buffers
 " leader maps for closing buffers 
-nnoremap <silent> <leader>x :Bunlink<CR>
 nnoremap <silent> <leader>X :Bunlink!<CR>
 
 " kinda messes up in fuzzyfinding.... bcuz it's termbuffer.
@@ -365,3 +364,7 @@ let g:workbench_storage_path = "/home/ympek/notes/"
 
 " im not convinced yet but...
 nnoremap <silent> <leader>p  :<C-u>CocList -A --normal yank<cr>
+
+" django stuff... for completion with pyright... notice it does not say .git
+" now...
+autocmd FileType python let b:coc_root_patterns = ['.env', 'venv', '.venv', 'manage.py']
