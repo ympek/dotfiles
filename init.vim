@@ -104,6 +104,9 @@ Plug 'neoclide/coc.nvim', { 'do': 'yarn install' }
 Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'vim-scripts/a.vim'
 
+Plug 'kyazdani42/nvim-web-devicons' " for file icons
+Plug 'kyazdani42/nvim-tree.lua'
+
 " web
 " Plug 'sheerun/vim-polyglot'
 Plug 'alvan/vim-closetag'
@@ -116,6 +119,7 @@ Plug 'chrisbra/Colorizer'
 Plug 'ympek/happy_hacking.vim'
 Plug 'fcpg/vim-fahrenheit'
 Plug 'cocopon/iceberg.vim'
+Plug 'sainnhe/everforest'
 
 Plug 'liuchengxu/vista.vim'
 Plug 'tweekmonster/startuptime.vim'
@@ -127,8 +131,7 @@ Plug 'liuchengxu/vim-clap', { 'do': { -> clap#installer#force_download() } }
 Plug 'marcushwz/nvim-workbench'
 Plug 'glts/vim-magnum'
 Plug 'glts/vim-radical'
-" Plug 'bfredl/nvim-miniyank'
- Plug 'voldikss/vim-floaterm'
+Plug 'voldikss/vim-floaterm'
 
 call plug#end()
 
@@ -148,8 +151,7 @@ let g:buftabline_indicators=1
 
 let g:closetag_filenames = '*.html,*.xhtml,*.phtml,*.php,*.html.twig,*.twig'
 
-" silent! colorscheme happy_hacking
-silent! colorscheme iceberg
+silent! colorscheme iceberg 
 
 function! LightlineFilename()
   let root = fnamemodify(get(b:, 'git_dir'), ':h')
@@ -166,23 +168,23 @@ endfun
 let g:lightline = {
       \ 'colorscheme': 'iceberg',
       \ 'active': {
-      \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'gitbranch', 'readonly', 'filename', 'modified', 'hello', 'cocstatus' ] ],
-      \
-      \   'right': [ [ 'lineinfo' ],
-      \              [ 'method' ] ],
-      \ },
-      \ 'component': {
-      \   'hello': 'jedziesz'
-      \ },
-      \ 'component_function': {
-      \   'gitbranch': 'FugitiveStatusline',
-      \   'filename': 'LightlineFilename',
-      \   'cocstatus': 'coc#status',
-      \   'funcname': 'ShowFuncName',
-      \   'method': 'NearestMethodOrFunction'
-      \ },
-      \ }
+        \   'left': [ [ 'mode', 'paste' ],
+        \             [ 'gitbranch', 'readonly', 'filename', 'modified', 'hello', 'cocstatus' ] ],
+        \
+        \   'right': [ [ 'lineinfo' ],
+        \              [ 'method', 'funcname' ] ],
+        \ },
+        \ 'component': {
+          \   'hello': 'jedziesz'
+          \ },
+          \ 'component_function': {
+            \   'gitbranch': 'FugitiveStatusline',
+            \   'filename': 'LightlineFilename',
+            \   'cocstatus': 'coc#status',
+            \   'funcname': 'ShowFuncName',
+            \   'method': 'NearestMethodOrFunction'
+            \ },
+            \ }
 set cursorline
 hi CursorLine cterm=NONE ctermbg=234
 set colorcolumn=120
@@ -234,22 +236,22 @@ nnoremap <C-F>t :CtrlSFToggle<CR>
 inoremap <C-F>t <Esc>:CtrlSFToggle<CR>
 
 let g:ctrlsf_auto_close = {
-    \ "normal" : 0,
-    \ "compact": 0
-    \}
+      \ "normal" : 0,
+      \ "compact": 0
+      \}
 
 let g:ctrlsf_auto_focus = {
-    \ "at": "start"
-    \ }
+      \ "at": "start"
+      \ }
 
 " use my own ignore file instead of our repo's gitignore.
 let g:ctrlsf_extra_backend_args = {
-    \ 'ag': '-p ~/.my_ignore -U'
-    \ }
+      \ 'ag': '-p ~/.my_ignore -U'
+      \ }
 
 " persistent undo
 if !isdirectory($HOME."/.config/nvim/undodir")
-    call mkdir($HOME."/.config/nvim/undodir", "p")
+  call mkdir($HOME."/.config/nvim/undodir", "p")
 endif
 
 set undodir=~/.config/nvim/undodir
@@ -368,3 +370,13 @@ nnoremap <silent> <leader>p  :<C-u>CocList -A --normal yank<cr>
 " django stuff... for completion with pyright... notice it does not say .git
 " now...
 autocmd FileType python let b:coc_root_patterns = ['.env', 'venv', '.venv', 'manage.py']
+
+nnoremap <leader>f :NvimTreeToggle<CR>
+" nnoremap <leader>f :NvimTreeRefresh<CR>
+" nnoremap <leader>n :NvimTreeFindFile<CR>
+" NvimTreeOpen and NvimTreeClose are also available if you need them
+
+set termguicolors " this variable must be enabled for colors to be applied properly
+
+" a list of groups can be found at `:help nvim_tree_highlight`
+" highlight NvimTreeFolderIcon guibg=blue
