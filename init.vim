@@ -151,7 +151,7 @@ let g:buftabline_indicators=1
 
 let g:closetag_filenames = '*.html,*.xhtml,*.phtml,*.php,*.html.twig,*.twig'
 
-silent! colorscheme iceberg 
+silent! colorscheme iceberg
 
 function! LightlineFilename()
   let root = fnamemodify(get(b:, 'git_dir'), ':h')
@@ -280,11 +280,16 @@ noremap <C-F> <Nop>
 
 let g:cpp_experimental_template_highlight = 1
 
+function! SaveAndPrintFilepath()
+  let @p=expand("%:p")
+  echo @p
+endfunc
+
 " leader maps
 let mapleader = "\<Space>"
 nmap <leader>a :A<CR>
 map <leader>c :noh <CR>
-nmap <leader>o :echo expand("%:p") <CR>
+nmap <leader>o :call SaveAndPrintFilepath()<CR>
 nnoremap <leader>w :vertical resize 160<CR>
 nnoremap <leader>l :set wrap!<CR>
 map <leader>s <C-w><C-w>
@@ -314,11 +319,14 @@ function! ToggleMouse()
 endfunc
 
 nnoremap <leader>t :FloatermNew<CR>
+nnoremap <leader>` :FloatermToggle<CR>
 
 map <leader>q :call ToggleMouse()<CR>
 map <leader>h :silent! 0Glog -10<CR>:bot copen<CR>0f.3w
 " git show hash under cursor :))
 map <leader>gs "gyiw:FloatermNew! git show <C-r>g<CR>
+" git file history
+map <leader>gh :FloatermNew! git log --follow -M -p <C-r>%<CR>
 " uhhh
 map <leader>bd :bp\|bd!<CR>
 " leader maps for closing buffers
