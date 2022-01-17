@@ -1,3 +1,4 @@
+" vimrc vanilla part
 imap jk <Esc>
 imap kj <Esc>
 nnoremap ; :
@@ -11,14 +12,27 @@ nnoremap ss <C-w><C-j>
 nnoremap sa <C-w><C-h>
 nnoremap sd <C-w><C-l>
 
+if exists('$TMUX')
+  " Colors in tmux
+  let &t_8f = "<Esc>[38;2;%lu;%lu;%lum"
+  let &t_8b = "<Esc>[48;2;%lu;%lu;%lum"
+endif
+
+set termguicolors
+set background=dark
+
 set nonumber
 set path+=**
 set wildmenu
 set ignorecase
 set smartcase
 
-" it's in my statusline!
-set noshowmode
+set nobackup
+set nowritebackup
+" i dont really want it
+" set cmdheight=2
+set updatetime=300
+set shortmess+=c
 
 " better visible line break
 set showbreak=>
@@ -66,6 +80,8 @@ set visualbell
 set history=2000
 set lazyredraw
 set signcolumn=yes
+set cursorline
+set colorcolumn=120
 
 noremap <F3> :set relativenumber!<CR>
 noremap <F2> :set number!<CR>
@@ -80,135 +96,9 @@ map <PageDown> <Nop>
 map <PageUp> <Nop>
 map <CapsLock> <Nop>
 
-let g:vimwiki_list = [{'path':'~/.vimwiki/wiki', 'path_html':'~/public_html/vimwiki/'}]
-" PLUGINS
-call plug#begin()
-" base/fav/superUseful
-Plug 'itchyny/lightline.vim'
-Plug 'tpope/vim-fugitive'
-Plug 'ap/vim-buftabline'
-Plug 'vim-utils/vim-interruptless'
-Plug 'osyo-manga/vim-brightest'
-Plug 'kshenoy/vim-signature'
-Plug 'google/vim-searchindex'
-Plug 'dyng/ctrlsf.vim'
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'junegunn/fzf.vim'
-Plug 'tpope/vim-commentary'
-Plug 'justinmk/vim-dirvish'
-Plug 'vim-scripts/taglist.vim'
-Plug 'tpope/vim-surround'
-Plug 'neoclide/coc.nvim', { 'do': 'yarn install' }
-
-" c/cpp
-Plug 'octol/vim-cpp-enhanced-highlight'
-Plug 'vim-scripts/a.vim'
-
-Plug 'kyazdani42/nvim-web-devicons' " for file icons
-Plug 'kyazdani42/nvim-tree.lua'
-
-" web
-" Plug 'sheerun/vim-polyglot'
-Plug 'alvan/vim-closetag'
-Plug 'othree/html5.vim'
-" Plug 'pangloss/vim-javascript'
-Plug 'mxw/vim-jsx'
-Plug 'chrisbra/Colorizer'
-
-" colorschemes:
-Plug 'ympek/happy_hacking.vim'
-Plug 'fcpg/vim-fahrenheit'
-Plug 'cocopon/iceberg.vim'
-Plug 'sainnhe/everforest'
-
-Plug 'liuchengxu/vista.vim'
-Plug 'tweekmonster/startuptime.vim'
-" dont mess up my layout
-Plug 'orlp/vim-bunlink'
-
-" testing new stuff
-Plug 'liuchengxu/vim-clap', { 'do': { -> clap#installer#force_download() } }
-Plug 'marcushwz/nvim-workbench'
-Plug 'glts/vim-magnum'
-Plug 'glts/vim-radical'
-Plug 'voldikss/vim-floaterm'
-
-call plug#end()
-
-map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
-
-function! NearestMethodOrFunction() abort
-  return get(b:, 'vista_nearest_method_or_function', '')
-endfunction
-
-" By default vista.vim never run if you don't call it explicitly.
-"
-" If you want to show the nearest function in your statusline automatically,
-" you can add the following line to your vimrc
-autocmd VimEnter * call vista#RunForNearestMethodOrFunction()
-
-let g:buftabline_indicators=1
-
-let g:closetag_filenames = '*.html,*.xhtml,*.phtml,*.php,*.html.twig,*.twig'
-
-silent! colorscheme iceberg
-
-function! LightlineFilename()
-  let root = fnamemodify(get(b:, 'git_dir'), ':h')
-  let path = expand('%:p')
-  if path[:len(root)-1] ==# root
-    return path[len(root)+1:]
-  endif
-  return expand('%')
-endfunction
-
-fun! ShowFuncName()
-  return getline(search("^[^ \t#/]\\{2}.*[^:]\s*$", 'bWn'))
-endfun
-let g:lightline = {
-      \ 'colorscheme': 'iceberg',
-      \ 'active': {
-        \   'left': [ [ 'mode', 'paste' ],
-        \             [ 'gitbranch', 'readonly', 'filename', 'modified', 'hello', 'cocstatus' ] ],
-        \
-        \   'right': [ [ 'lineinfo' ],
-        \              [ 'method', 'funcname' ] ],
-        \ },
-        \ 'component': {
-          \   'hello': 'jedziesz'
-          \ },
-          \ 'component_function': {
-            \   'gitbranch': 'FugitiveStatusline',
-            \   'filename': 'LightlineFilename',
-            \   'cocstatus': 'coc#status',
-            \   'funcname': 'ShowFuncName',
-            \   'method': 'NearestMethodOrFunction'
-            \ },
-            \ }
-set cursorline
-hi CursorLine cterm=NONE ctermbg=234
-set colorcolumn=120
-hi BufTabLineCurrent ctermfg=204
-hi BufTabLineActive ctermfg=217
-hi SignatureMarkText ctermfg=162
-hi BrightestHl cterm=NONE ctermbg=239
-
-" or GitFiles
-nnoremap <C-p> :GitFiles<CR>
-
-let g:brightest#highlight = {
-      \	"group"    : "BrightestHl",
-      \}
-
 if !has('gui_running')
   set t_Co=256
 endif
-
-" fix annoying vim-commentary /* */
-autocmd FileType c,hpp,cpp,cs,java,php setlocal commentstring=//\ %s
-
-" do plikow linkera se zrobilem
-autocmd BufRead *.lcf set syntax=ld
 
 "remember the line I was on when I reopen a file
 autocmd BufReadPost *
@@ -225,90 +115,17 @@ autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
 
+" neovim 4.0 has floating wildmenu. I don't really love it.
+set wildoptions-=pum
 
-nmap     <C-F>f <Plug>CtrlSFPrompt
-vmap     <C-F>f <Plug>CtrlSFVwordPath
-vmap     <C-F>F <Plug>CtrlSFVwordExec
-nmap     <C-F>n <Plug>CtrlSFCwordPath
-nmap     <C-F>p <Plug>CtrlSFPwordPath
-nnoremap <C-F>o :CtrlSFOpen<CR>
-nnoremap <C-F>t :CtrlSFToggle<CR>
-inoremap <C-F>t <Esc>:CtrlSFToggle<CR>
-
-let g:ctrlsf_auto_close = {
-      \ "normal" : 0,
-      \ "compact": 0
-      \}
-
-let g:ctrlsf_auto_focus = {
-      \ "at": "start"
-      \ }
-
-" use my own ignore file instead of our repo's gitignore.
-let g:ctrlsf_extra_backend_args = {
-      \ 'ag': '-p ~/.my_ignore -U'
-      \ }
-
-" persistent undo
-if !isdirectory($HOME."/.config/nvim/undodir")
-  call mkdir($HOME."/.config/nvim/undodir", "p")
-endif
-
-set undodir=~/.config/nvim/undodir
-set undofile
-set undolevels=99999 "maximum number of changes that can be undone
-set undoreload=10000 "maximum number lines to save for undo on a buffer reload
+" ok, tab is superior to inconvienient vim defaults when dealing with completion.
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<Tab>"
 
 " search for visually selected text LITERALLY
 vnoremap // y/\V<C-r>=escape(@",'/\')<CR><CR>
 " search for visually selected text as regex
 " vnoremap // y/<C-R>"<CR>
-
-" vim-buffergator uses <leader>b to BuffergatorOpen, i would like use it for
-" toggle.
-" nnoremap <leader>b :BuffergatorToggle<CR>
-" let g:buffergator_sort_regime='mru'
-" let g:buffergator_autoupdate=1
-
-" remove insert mode maps which a.vim adds (i dont like them)
-autocmd VimEnter * iunmap <Leader>ihn
-autocmd VimEnter * iunmap <Leader>ih
-autocmd VimEnter * iunmap <Leader>is
-
-" hitting it too much when using CtrlSF so unmap this
-noremap <C-F> <Nop>
-
-let g:cpp_experimental_template_highlight = 1
-
-function! SaveAndPrintFilepath()
-  let @p=expand("%:p")
-  echo @p
-endfunc
-
-" leader maps
-let mapleader = "\<Space>"
-nmap <leader>a :A<CR>
-map <leader>c :noh <CR>
-nmap <leader>o :call SaveAndPrintFilepath()<CR>
-nnoremap <leader>w :vertical resize 160<CR>
-nnoremap <leader>l :set wrap!<CR>
-map <leader>s <C-w><C-w>
-nnoremap <leader>g *<C-O>:%s///gn<CR>
-
-" rename variable/fun etc in file
-nnoremap <silent><leader>R :%s/\<<c-r><c-w>\>//gI<c-f>$F/i
-
-" time to tweak marks usage
-" list all GLOBAL MARKS
-nmap <leader>m :marks QWERTYUIOPASDFGHJKLZXCVBNM<CR>
-
-" tag list - testing new plugin
-let Tlist_GainFocus_On_ToggleOpen = 1
-let Tlist_WinWidth = 56
-nmap <leader>k :Tlist<CR>
-
-" vanilla snippets!
-" nnoremap <leader>Sr :-1read $HOME/.config/nvim/snippets/symfony-route.yaml<CR>
 
 function! ToggleMouse()
   if &mouse == 'a'
@@ -318,73 +135,25 @@ function! ToggleMouse()
   endif
 endfunc
 
-nnoremap <leader>t :FloatermNew<CR>
-nnoremap <leader>` :FloatermToggle<CR>
+function! SaveAndPrintFilepath()
+  let @p=expand("%:p")
+  echo @p
+endfunc
 
+" leader maps - vanilla
+let mapleader = "\<Space>"
 map <leader>q :call ToggleMouse()<CR>
-map <leader>h :silent! 0Glog -10<CR>:bot copen<CR>0f.3w
-" git show hash under cursor :))
-map <leader>gs "gyiw:FloatermNew! git show <C-r>g<CR>
-" git file history
-map <leader>gh :FloatermNew! git log --follow -M -p <C-r>%<CR>
-" uhhh
-map <leader>bd :bp\|bd!<CR>
-" leader maps for closing buffers
-" leader maps for closing buffers 
-nnoremap <silent> <leader>X :Bunlink!<CR>
+nmap <leader>o :call SaveAndPrintFilepath()<CR>
+map <leader>c :noh<CR>
+nnoremap <leader>w :vertical resize 160<CR>
+nnoremap <leader>l :set wrap!<CR>
+map <leader>s <C-w><C-w>
+" rename variable/fun etc in file
+nnoremap <silent><leader>R :%s/\<<c-r><c-w>\>//gI<c-f>$F/i
+" list all GLOBAL MARKS
+nmap <leader>m :marks QWERTYUIOPASDFGHJKLZXCVBNM<CR>
+" vanilla snippets!
+" nnoremap <leader>Sr :-1read $HOME/.config/nvim/snippets/symfony-route.yaml<CR>
+map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 
-" kinda messes up in fuzzyfinding.... bcuz it's termbuffer.
-" to be fixed.
-tnoremap qq <C-\><C-n>:bd!<CR>
-tnoremap jk <C-\><C-n>
-tnoremap kj <C-\><C-n>
-
-" stop fugitive from polluting my buffer list
-autocmd BufReadPost fugitive://* set bufhidden=delete
-" same for workbench?/todolist
-autocmd BufReadPost workbench.md set bufhidden=delete
-
-nmap <leader>d <Plug>(coc-definition)
-nmap <leader>n <Plug>(coc-references)
-nn <silent> K :call CocActionAsync('doHover')<cr>
-
-" webdev again
-let g:html_indent_script1 = "inc"
-let g:html_indent_style1 = "inc"
-
-" ok, tab is superior to inconvienient vim defaults when dealing with completion.
-inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<Tab>"
-
-let g:alternateSearchPath = 'sfr:../source,sfr:../src,sfr:../include,sfr:../inc,sfr:../Include,sfr:../Source'
-
-" neovim 4.0 has floating wildmenu. I don't really love it.
-set wildoptions-=pum
-
-" Below are my personal key mappings
-" <Plug>ToggleProjectWorkbench let you toggle project specific workbench
-nmap <leader>\ <Plug>ToggleProjectWorkbench
-
-" <Plug>WorkbenchToggleCheckbox allows you to add/toggle the checkbox
-" - testing -> - [ ] testing
-" - [ ] testing -> - [x] testing
-" - [x] testing -> - [ ] testing
-nmap <leader><CR> <Plug>WorkbenchToggleCheckbox
-let g:workbench_storage_path = "/home/ympek/notes/"
-
-" im not convinced yet but...
-nnoremap <silent> <leader>p  :<C-u>CocList -A --normal yank<cr>
-
-" django stuff... for completion with pyright... notice it does not say .git
-" now...
-autocmd FileType python let b:coc_root_patterns = ['.env', 'venv', '.venv', 'manage.py']
-
-nnoremap <leader>f :NvimTreeToggle<CR>
-" nnoremap <leader>f :NvimTreeRefresh<CR>
-" nnoremap <leader>n :NvimTreeFindFile<CR>
-" NvimTreeOpen and NvimTreeClose are also available if you need them
-
-set termguicolors " this variable must be enabled for colors to be applied properly
-
-" a list of groups can be found at `:help nvim_tree_highlight`
-" highlight NvimTreeFolderIcon guibg=blue
+runtime plugins.vim
