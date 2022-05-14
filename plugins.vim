@@ -29,9 +29,7 @@ Plug 'tpope/vim-commentary'
 Plug 'justinmk/vim-dirvish'
 Plug 'vim-scripts/taglist.vim'
 Plug 'tpope/vim-surround'
-Plug 'neoclide/coc.nvim', { 'do': 'yarn install' }
-Plug 'prabirshrestha/vim-lsp'
-Plug 'mattn/vim-lsp-settings'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'RRethy/vim-illuminate'
 
 " c/cpp
@@ -53,6 +51,8 @@ Plug 'chrisbra/Colorizer'
 " colorschemes:
 Plug 'ympek/happy_hacking.vim'
 Plug 'ympek/iceberg.vim'
+Plug 'ympek/melange'
+Plug 'FrenzyExists/aquarium-vim'
 
 Plug 'liuchengxu/vista.vim'
 Plug 'tweekmonster/startuptime.vim'
@@ -65,7 +65,8 @@ Plug 'marcushwz/nvim-workbench'
 Plug 'glts/vim-magnum'
 Plug 'glts/vim-radical'
 Plug 'voldikss/vim-floaterm'
-Plug 'lukas-reineke/indent-blankline.nvim'
+
+Plug 'fatih/vim-go'
 
 call plug#end()
 
@@ -83,7 +84,7 @@ let g:buftabline_indicators=1
 
 let g:closetag_filenames = '*.html,*.xhtml,*.phtml,*.php,*.html.twig,*.twig'
 
-silent! colorscheme iceberg
+silent! colorscheme melange
 
 function! LightlineFilename()
   let root = fnamemodify(get(b:, 'git_dir'), ':h')
@@ -118,7 +119,7 @@ let g:lightline = {
             \ },
             \ }
 
-hi CursorLine cterm=NONE ctermbg=234
+" hi CursorLine cterm=NONE ctermbg=234
 hi SignatureMarkText ctermfg=162
 
 " or GitFiles
@@ -203,10 +204,10 @@ autocmd BufReadPost fugitive://* set bufhidden=delete
 " same for workbench?/todolist
 autocmd BufReadPost workbench.md set bufhidden=delete
 
-nmap <leader>dc :LspDeclaration<CR>
-nmap <leader>df :LspDefinition<CR>
-nmap <leader>n :LspReferences<CR>
-nn <silent> K :LspHover<CR>
+" nmap <leader>dc :LspDeclaration<CR>
+nmap <leader>df <Plug>(coc-definition)
+nmap <leader>n <Plug>(coc-references)
+nn <silent>K :call CocActionAsync('doHover')<cr>
 
 " webdev again
 let g:html_indent_script1 = "inc"
@@ -253,5 +254,8 @@ endif
 
 imap <c-space> <Plug>(asyncomplete_force_refresh)
 
-
+" https://github.com/neoclide/coc-css
+" For scss files, you may need use:
+autocmd FileType scss setl iskeyword+=@-@
+"autocmd BufRead *.hbs set syntax=html
 
