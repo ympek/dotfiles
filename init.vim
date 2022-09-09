@@ -119,8 +119,8 @@ autocmd BufWinLeave * call clearmatches()
 set wildoptions-=pum
 
 " ok, tab is superior to inconvienient vim defaults when dealing with completion.
-inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<Tab>"
+" inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+" inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<Tab>"
 
 " search for visually selected text LITERALLY
 vnoremap // y/\V<C-r>=escape(@",'/\')<CR><CR>
@@ -147,7 +147,6 @@ nmap <leader>o :call SaveAndPrintFilepath()<CR>
 map <leader>c :noh<CR>
 nnoremap <leader>w :vertical resize 160<CR>
 nnoremap <leader>l :set wrap!<CR>
-map <leader>s <C-w><C-w>
 " rename variable/fun etc in file
 nnoremap <silent><leader>R :%s/\<<c-r><c-w>\>//gI<c-f>$F/i
 " list all GLOBAL MARKS

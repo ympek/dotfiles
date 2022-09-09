@@ -16,7 +16,7 @@ set noshowmode
 " PLUGINS
 call plug#begin()
 " base/fav/superUseful
-Plug 'itchyny/lightline.vim'
+" Plug 'itchyny/lightline.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'ap/vim-buftabline'
 Plug 'vim-utils/vim-interruptless'
@@ -38,7 +38,7 @@ Plug 'vim-scripts/a.vim'
 Plug 'lyuts/vim-rtags'
 
 Plug 'kyazdani42/nvim-web-devicons' " for file icons
-Plug 'kyazdani42/nvim-tree.lua', { 'tag': '1.2.5' }
+Plug 'kyazdani42/nvim-tree.lua'
 
 " web
 " Plug 'sheerun/vim-polyglot'
@@ -65,6 +65,8 @@ Plug 'marcushwz/nvim-workbench'
 Plug 'glts/vim-magnum'
 Plug 'glts/vim-radical'
 Plug 'voldikss/vim-floaterm'
+Plug 'folke/trouble.nvim'
+Plug 'nvim-lualine/lualine.nvim'
 
 Plug 'fatih/vim-go'
 
@@ -86,38 +88,38 @@ let g:closetag_filenames = '*.html,*.xhtml,*.phtml,*.php,*.html.twig,*.twig'
 
 silent! colorscheme melange
 
-function! LightlineFilename()
-  let root = fnamemodify(get(b:, 'git_dir'), ':h')
-  let path = expand('%:p')
-  if path[:len(root)-1] ==# root
-    return path[len(root)+1:]
-  endif
-  return expand('%')
-endfunction
+" function! LightlineFilename()
+"   let root = fnamemodify(get(b:, 'git_dir'), ':h')
+"   let path = expand('%:p')
+"   if path[:len(root)-1] ==# root
+"     return path[len(root)+1:]
+"   endif
+"   return expand('%')
+" endfunction
 
-fun! ShowFuncName()
-  return getline(search("^[^ \t#/]\\{2}.*[^:]\s*$", 'bWn'))
-endfun
-let g:lightline = {
-      \ 'colorscheme': 'iceberg',
-      \ 'active': {
-        \   'left': [ [ 'mode', 'paste' ],
-        \             [ 'gitbranch', 'readonly', 'filename', 'modified', 'hello', 'cocstatus' ] ],
-        \
-        \   'right': [ [ 'lineinfo' ],
-        \              [ 'method', 'funcname' ] ],
-        \ },
-        \ 'component': {
-          \   'hello': 'jedziesz'
-          \ },
-          \ 'component_function': {
-            \   'gitbranch': 'FugitiveStatusline',
-            \   'filename': 'LightlineFilename',
-            \   'cocstatus': 'coc#status',
-            \   'funcname': 'ShowFuncName',
-            \   'method': 'NearestMethodOrFunction'
-            \ },
-            \ }
+" fun! ShowFuncName()
+"   return getline(search("^[^ \t#/]\\{2}.*[^:]\s*$", 'bWn'))
+" endfun
+" let g:lightline = {
+"       \ 'colorscheme': 'iceberg',
+"       \ 'active': {
+"         \   'left': [ [ 'mode', 'paste' ],
+"         \             [ 'gitbranch', 'readonly', 'filename', 'modified', 'hello', 'cocstatus' ] ],
+"         \
+"         \   'right': [ [ 'lineinfo' ],
+"         \              [ 'method', 'funcname' ] ],
+"         \ },
+"         \ 'component': {
+"           \   'hello': 'jedziesz'
+"           \ },
+"           \ 'component_function': {
+"             \   'gitbranch': 'FugitiveStatusline',
+"             \   'filename': 'LightlineFilename',
+"             \   'cocstatus': 'coc#status',
+"             \   'funcname': 'ShowFuncName',
+"             \   'method': 'NearestMethodOrFunction'
+"             \ },
+"             \ }
 
 " hi CursorLine cterm=NONE ctermbg=234
 hi SignatureMarkText ctermfg=162
@@ -188,6 +190,8 @@ map <leader>h :silent! 0Glog -10<CR>:bot copen<CR>0f.3w
 map <leader>gs "gyiw:FloatermNew! git show <C-r>g<CR>
 " git file history
 map <leader>gh :FloatermNew! git log --follow -M -p <C-r>%<CR>
+" git blame (fugitive.vim)
+map <leader>gb :Git blame<CR>
 " uhhh
 map <leader>bd :bp\|bd!<CR>
 " leader maps for closing buffers
@@ -209,6 +213,8 @@ nmap <leader>df <Plug>(coc-definition)
 nmap <leader>n <Plug>(coc-references)
 nn <silent>K :call CocActionAsync('doHover')<cr>
 
+map <leader>s :CocList symbols<CR>
+
 " webdev again
 let g:html_indent_script1 = "inc"
 let g:html_indent_style1 = "inc"
@@ -224,7 +230,7 @@ nmap <leader>\ <Plug>ToggleProjectWorkbench
 " - [ ] testing -> - [x] testing
 " - [x] testing -> - [ ] testing
 nmap <leader><CR> <Plug>WorkbenchToggleCheckbox
-let g:workbench_storage_path = "/home/szymon/notes/"
+let g:workbench_storage_path = "/home/ympek/notes/"
 
 " im not convinced yet but...
 nnoremap <silent> <leader>p  :<C-u>CocList -A --normal yank<cr>
@@ -232,6 +238,14 @@ nnoremap <silent> <leader>p  :<C-u>CocList -A --normal yank<cr>
 " django stuff... for completion with pyright... notice it does not say .git
 " now...
 autocmd FileType python let b:coc_root_patterns = ['.env', 'venv', '.venv', 'manage.py']
+
+lua << EOF
+require("nvim-tree").setup()
+require('lualine').setup {
+  options = { theme = 'jellybeans' }
+}
+
+EOF
 
 nnoremap <leader>f :NvimTreeToggle<CR>
 " nnoremap <leader>f :NvimTreeRefresh<CR>
@@ -259,3 +273,10 @@ imap <c-space> <Plug>(asyncomplete_force_refresh)
 autocmd FileType scss setl iskeyword+=@-@
 "autocmd BufRead *.hbs set syntax=html
 
+" some update to coc.nvim yhhh
+" inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<C-y>"
+inoremap <silent><expr> <Tab> coc#pum#visible() ? coc#pum#next(1) : "\<Tab>"
+inoremap <silent><expr> <S-Tab> coc#pum#visible() ? coc#pum#prev(1) : "\<S-Tab>"
+
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
+inoremap <silent><expr> <Esc> coc#pum#visible() ? coc#pum#cancel() : "\<Esc>"

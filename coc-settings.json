@@ -7,7 +7,8 @@
         "cpp",
         "hpp",
         "objc",
-        "objcpp"
+        "objcpp",
+        "h"
       ],
       "rootPatterns": [
         ".ccls",
@@ -21,12 +22,12 @@
           "directory": "/tmp/ccls"
         },
         "clang": {
-          "extraArgs": ["-std=c++17"]
+          "extraArgs": ["-std=c++20"]
         }
       }
     },
     "golang": {
-      "command": "/home/szymon/go/bin/gopls",
+      "command": "/home/ympek/go/bin/gopls",
       "rootPatterns": ["go.mod", ".vim/", ".git/", ".hg/"],
       "filetypes": ["go"]
     }
