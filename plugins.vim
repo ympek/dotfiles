@@ -27,9 +27,9 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-commentary'
 Plug 'justinmk/vim-dirvish'
-Plug 'vim-scripts/taglist.vim'
+" Plug 'vim-scripts/taglist.vim'
 Plug 'tpope/vim-surround'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+" Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'RRethy/vim-illuminate'
 
 " c/cpp
@@ -69,6 +69,16 @@ Plug 'folke/trouble.nvim'
 Plug 'nvim-lualine/lualine.nvim'
 
 Plug 'fatih/vim-go'
+
+" completion
+Plug 'neovim/nvim-lspconfig'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/cmp-cmdline'
+Plug 'hrsh7th/nvim-cmp'
+Plug 'L3MON4D3/LuaSnip'
+Plug 'saadparwaiz1/cmp_luasnip'
 
 call plug#end()
 
@@ -209,11 +219,11 @@ autocmd BufReadPost fugitive://* set bufhidden=delete
 autocmd BufReadPost workbench.md set bufhidden=delete
 
 " nmap <leader>dc :LspDeclaration<CR>
-nmap <leader>df <Plug>(coc-definition)
-nmap <leader>n <Plug>(coc-references)
-nn <silent>K :call CocActionAsync('doHover')<cr>
+" nmap <leader>df <Plug>(coc-definition)
+" nmap <leader>n <Plug>(coc-references)
+" nn <silent>K :call CocActionAsync('doHover')<cr>
 
-map <leader>s :CocList symbols<CR>
+" map <leader>s :CocList symbols<CR>
 
 " webdev again
 let g:html_indent_script1 = "inc"
@@ -233,11 +243,11 @@ nmap <leader><CR> <Plug>WorkbenchToggleCheckbox
 let g:workbench_storage_path = "/home/ympek/notes/"
 
 " im not convinced yet but...
-nnoremap <silent> <leader>p  :<C-u>CocList -A --normal yank<cr>
+" nnoremap <silent> <leader>p  :<C-u>CocList -A --normal yank<cr>
 
 " django stuff... for completion with pyright... notice it does not say .git
 " now...
-autocmd FileType python let b:coc_root_patterns = ['.env', 'venv', '.venv', 'manage.py']
+" autocmd FileType python let b:coc_root_patterns = ['.env', 'venv', '.venv', 'manage.py']
 
 lua << EOF
 require("nvim-tree").setup()
@@ -275,8 +285,10 @@ autocmd FileType scss setl iskeyword+=@-@
 
 " some update to coc.nvim yhhh
 " inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<C-y>"
-inoremap <silent><expr> <Tab> coc#pum#visible() ? coc#pum#next(1) : "\<Tab>"
-inoremap <silent><expr> <S-Tab> coc#pum#visible() ? coc#pum#prev(1) : "\<S-Tab>"
+" inoremap <silent><expr> <Tab> coc#pum#visible() ? coc#pum#next(1) : "\<Tab>"
+" inoremap <silent><expr> <S-Tab> coc#pum#visible() ? coc#pum#prev(1) : "\<S-Tab>"
 
-inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
-inoremap <silent><expr> <Esc> coc#pum#visible() ? coc#pum#cancel() : "\<Esc>"
+" inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
+" inoremap <silent><expr> <Esc> coc#pum#visible() ? coc#pum#cancel() : "\<Esc>"
+"
+runtime completion.vim
