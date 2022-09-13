@@ -3,16 +3,29 @@ set completeopt=menu,menuone,noselect
 lua <<EOF
   -- Set up nvim-cmp.
   local cmp = require'cmp'
+  local lspkind = require('lspkind')
+  local luasnip = require('luasnip')
+
+  local has_words_before = function()
+    local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+    return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+  end 
 
   cmp.setup({
+    formatting = {
+        format = lspkind.cmp_format({
+          mode = 'symbol_text',
+          maxwidth = 50, -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
+        })
+    },
     snippet = {
       expand = function(args)
-        require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+        luasnip.lsp_expand(args.body) -- For `luasnip` users.
       end,
     },
     window = {
-      -- completion = cmp.config.window.bordered(),
-      -- documentation = cmp.config.window.bordered(),
+      completion = cmp.config.window.bordered(),
+      documentation = cmp.config.window.bordered(),
     },
     mapping = {
       ["<Tab>"] = cmp.mapping(function(fallback)
@@ -100,20 +113,20 @@ lua <<EOF
     -- Mappings.
     -- See `:help vim.lsp.*` for documentation on any of the below functions
     local bufopts = { noremap=true, silent=true, buffer=bufnr }
-    vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, bufopts)
-    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)
+    vim.keymap.set('n', '<leader>dc', vim.lsp.buf.declaration, bufopts)
+    vim.keymap.set('n', '<leader>df', vim.lsp.buf.definition, bufopts)
     vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
-    vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bufopts)
+    vim.keymap.set('n', '<leader>i', vim.lsp.buf.implementation, bufopts)
     vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, bufopts)
     -- vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, bufopts)
     -- vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, bufopts)
     -- vim.keymap.set('n', '<space>wl', function()
     --   print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
     -- end, bufopts)
-    vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, bufopts)
-    vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, bufopts)
-    vim.keymap.set('n', '<space>ca', vim.lsp.buf.code_action, bufopts)
-    vim.keymap.set('n', 'gr', vim.lsp.buf.references, bufopts)
+    vim.keymap.set('n', '<leader>td', vim.lsp.buf.type_definition, bufopts)
+    vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, bufopts)
+    -- vim.keymap.set('n', '<leader>a', vim.lsp.buf.code_action, bufopts)
+    vim.keymap.set('n', '<leader>n', vim.lsp.buf.references, bufopts)
     vim.keymap.set('n', '<space>f', vim.lsp.buf.formatting, bufopts)
   end
 
@@ -122,25 +135,56 @@ lua <<EOF
     debounce_text_changes = 150,
   }
 
+  local border = {
+        {"🭽", "FloatBorder"},
+        {"▔", "FloatBorder"},
+        {"🭾", "FloatBorder"},
+        {"▕", "FloatBorder"},
+        {"🭿", "FloatBorder"},
+        {"▁", "FloatBorder"},
+        {"🭼", "FloatBorder"},
+        {"▏", "FloatBorder"},
+  }
 
+  -- LSP settings (for overriding per client)
+  local handlers =  {
+    ["textDocument/hover"] =  vim.lsp.with(vim.lsp.handlers.hover, {border = border}),
+    ["textDocument/signatureHelp"] =  vim.lsp.with(vim.lsp.handlers.signature_help, {border = border }),
+  }
 
   -- Set up lspconfig.
   local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
   local lspconfig = require('lspconfig')
   -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
   lspconfig.pyright.setup {
+    handlers = handlers,
     capabilities = capabilities,
     on_attach = on_attach,
     flags = lsp_flags,
   }
 
   lspconfig.gopls.setup {
+    handlers = handlers,
     capabilities = capabilities,
     on_attach = on_attach,
     flags = lsp_flags,
+    settings = {
+      gopls = {
+        experimentalPostfixCompletions = true,
+        analyses = {
+          unusedparams = true,
+          shadow = true,
+        },
+        staticcheck = true,
+      },
+    },
+    init_options = {
+      usePlaceholders = true,
+    }
   }
 
   lspconfig.ccls.setup {
+    handlers = handlers,
     capabilities = capabilities,
     on_attach = on_attach,
     flags = lsp_flags,
@@ -154,5 +198,13 @@ lua <<EOF
         extraArgs = { "-std=c++20" }
       };
     }
+  }
+
+  lspconfig.tsserver.setup{}
+
+  capabilities.textDocument.completion.completionItem.snippetSupport = true
+
+  lspconfig.cssls.setup {
+    capabilities = capabilities,
   }
 EOF

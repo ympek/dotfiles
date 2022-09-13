@@ -86,11 +86,10 @@ set colorcolumn=120
 noremap <F3> :set relativenumber!<CR>
 noremap <F2> :set number!<CR>
 
-" use hjkl my friend
+map <left> :cprev <CR>
+map <right> :cnext<CR>
 map <up> <nop>
 map <down> <nop>
-map <left> <nop>
-map <right> <nop>
 " annoying on thinkpad
 map <PageDown> <Nop>
 map <PageUp> <Nop>
@@ -149,8 +148,6 @@ nnoremap <leader>w :vertical resize 160<CR>
 nnoremap <leader>l :set wrap!<CR>
 " rename variable/fun etc in file
 nnoremap <silent><leader>R :%s/\<<c-r><c-w>\>//gI<c-f>$F/i
-" list all GLOBAL MARKS
-nmap <leader>m :marks QWERTYUIOPASDFGHJKLZXCVBNM<CR>
 " vanilla snippets!
 " nnoremap <leader>Sr :-1read $HOME/.config/nvim/snippets/symfony-route.yaml<CR>
 map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>

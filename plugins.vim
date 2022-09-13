@@ -60,8 +60,7 @@ Plug 'tweekmonster/startuptime.vim'
 Plug 'orlp/vim-bunlink'
 
 " testing new stuff
-Plug 'liuchengxu/vim-clap', { 'do': { -> clap#installer#force_download() } }
-Plug 'marcushwz/nvim-workbench'
+" Plug 'marcushwz/nvim-workbench'
 Plug 'glts/vim-magnum'
 Plug 'glts/vim-radical'
 Plug 'voldikss/vim-floaterm'
@@ -69,6 +68,9 @@ Plug 'folke/trouble.nvim'
 Plug 'nvim-lualine/lualine.nvim'
 
 Plug 'fatih/vim-go'
+
+Plug 'leafgarland/typescript-vim'
+Plug 'maxmellon/vim-jsx-pretty'
 
 " completion
 Plug 'neovim/nvim-lspconfig'
@@ -79,6 +81,16 @@ Plug 'hrsh7th/cmp-cmdline'
 Plug 'hrsh7th/nvim-cmp'
 Plug 'L3MON4D3/LuaSnip'
 Plug 'saadparwaiz1/cmp_luasnip'
+
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'kosayoda/nvim-lightbulb'
+Plug 'onsails/lspkind.nvim'
+Plug 'windwp/nvim-autopairs'
+Plug 'windwp/nvim-ts-autotag'
+Plug 'folke/zen-mode.nvim'
+
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim', { 'branch': '0.1.x' }
 
 call plug#end()
 
@@ -98,52 +110,14 @@ let g:closetag_filenames = '*.html,*.xhtml,*.phtml,*.php,*.html.twig,*.twig'
 
 silent! colorscheme melange
 
-" function! LightlineFilename()
-"   let root = fnamemodify(get(b:, 'git_dir'), ':h')
-"   let path = expand('%:p')
-"   if path[:len(root)-1] ==# root
-"     return path[len(root)+1:]
-"   endif
-"   return expand('%')
-" endfunction
-
-" fun! ShowFuncName()
-"   return getline(search("^[^ \t#/]\\{2}.*[^:]\s*$", 'bWn'))
-" endfun
-" let g:lightline = {
-"       \ 'colorscheme': 'iceberg',
-"       \ 'active': {
-"         \   'left': [ [ 'mode', 'paste' ],
-"         \             [ 'gitbranch', 'readonly', 'filename', 'modified', 'hello', 'cocstatus' ] ],
-"         \
-"         \   'right': [ [ 'lineinfo' ],
-"         \              [ 'method', 'funcname' ] ],
-"         \ },
-"         \ 'component': {
-"           \   'hello': 'jedziesz'
-"           \ },
-"           \ 'component_function': {
-"             \   'gitbranch': 'FugitiveStatusline',
-"             \   'filename': 'LightlineFilename',
-"             \   'cocstatus': 'coc#status',
-"             \   'funcname': 'ShowFuncName',
-"             \   'method': 'NearestMethodOrFunction'
-"             \ },
-"             \ }
-
 " hi CursorLine cterm=NONE ctermbg=234
 hi SignatureMarkText ctermfg=162
 
-" or GitFiles
-nnoremap <C-p> :GitFiles<CR>
 
 " fix annoying vim-commentary /* */
 autocmd FileType c,hpp,cpp,cs,java,php setlocal commentstring=//\ %s
 
-" do plikow linkera se zrobilem
 autocmd BufRead *.lcf set syntax=ld
-
-
 
 nmap     <C-F>f <Plug>CtrlSFPrompt
 vmap     <C-F>f <Plug>CtrlSFVwordPath
@@ -168,7 +142,6 @@ let g:ctrlsf_auto_focus = {
 "       \ 'ag': '-p ~/.my_ignore -U'
 "       \ }
 
-
 " vim-buffergator uses <leader>b to BuffergatorOpen, i would like use it for
 " toggle.
 " nnoremap <leader>b :BuffergatorToggle<CR>
@@ -185,13 +158,13 @@ noremap <C-F> <Nop>
 
 let g:cpp_experimental_template_highlight = 1
 
+nnoremap <C-p> :Telescope find_files<CR>
 " leader maps - plugin-based
-nmap <leader>a :A<CR>
-" tag list - testing new plugin
-let Tlist_GainFocus_On_ToggleOpen = 1
-let Tlist_WinWidth = 56
-nmap <leader>k :Tlist<CR>
+nmap <leader>y :Telescope registers<CR>
+nmap <leader>k :Telescope tags<CR>
+nmap <leader>m :Telescope marks<CR>
 
+nmap <leader>a :A<CR>
 nnoremap <leader>t :FloatermNew<CR>
 nnoremap <leader>` :FloatermToggle<CR>
 
@@ -231,20 +204,6 @@ let g:html_indent_style1 = "inc"
 
 let g:alternateSearchPath = 'sfr:../source,sfr:../src,sfr:../include,sfr:../inc,sfr:../Include,sfr:../Source'
 
-" Below are my personal key mappings
-" <Plug>ToggleProjectWorkbench let you toggle project specific workbench
-nmap <leader>\ <Plug>ToggleProjectWorkbench
-
-" <Plug>WorkbenchToggleCheckbox allows you to add/toggle the checkbox
-" - testing -> - [ ] testing
-" - [ ] testing -> - [x] testing
-" - [x] testing -> - [ ] testing
-nmap <leader><CR> <Plug>WorkbenchToggleCheckbox
-let g:workbench_storage_path = "/home/ympek/notes/"
-
-" im not convinced yet but...
-" nnoremap <silent> <leader>p  :<C-u>CocList -A --normal yank<cr>
-
 " django stuff... for completion with pyright... notice it does not say .git
 " now...
 " autocmd FileType python let b:coc_root_patterns = ['.env', 'venv', '.venv', 'manage.py']
@@ -254,7 +213,9 @@ require("nvim-tree").setup()
 require('lualine').setup {
   options = { theme = 'jellybeans' }
 }
-
+require("nvim-autopairs").setup {}
+require('nvim-ts-autotag').setup{}
+require("zen-mode").setup {}
 EOF
 
 nnoremap <leader>f :NvimTreeToggle<CR>
@@ -283,12 +244,4 @@ imap <c-space> <Plug>(asyncomplete_force_refresh)
 autocmd FileType scss setl iskeyword+=@-@
 "autocmd BufRead *.hbs set syntax=html
 
-" some update to coc.nvim yhhh
-" inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<C-y>"
-" inoremap <silent><expr> <Tab> coc#pum#visible() ? coc#pum#next(1) : "\<Tab>"
-" inoremap <silent><expr> <S-Tab> coc#pum#visible() ? coc#pum#prev(1) : "\<S-Tab>"
-
-" inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
-" inoremap <silent><expr> <Esc> coc#pum#visible() ? coc#pum#cancel() : "\<Esc>"
-"
 runtime completion.vim
