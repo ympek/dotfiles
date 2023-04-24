@@ -6,11 +6,6 @@ nnoremap ; :
 nnoremap <c-x> :bnext<CR>
 nnoremap <c-z> :bprevious<CR>
 
-" switching between splits
-nnoremap sw <C-w><C-k>
-nnoremap ss <C-w><C-j>
-nnoremap sa <C-w><C-h>
-nnoremap sd <C-w><C-l>
 
 if exists('$TMUX')
   " Colors in tmux
@@ -151,5 +146,22 @@ nnoremap <silent><leader>R :%s/\<<c-r><c-w>\>//gI<c-f>$F/i
 " vanilla snippets!
 " nnoremap <leader>Sr :-1read $HOME/.config/nvim/snippets/symfony-route.yaml<CR>
 map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
+
+" switching between splits
+nnoremap <leader>sw <C-w><C-k>
+nnoremap <leader>ss <C-w><C-j>
+nnoremap <leader>sa <C-w><C-h>
+nnoremap <leader>sd <C-w><C-l>
+
+" persistent undo
+if !isdirectory($HOME."/.config/nvim/undodir")
+  call mkdir($HOME."/.config/nvim/undodir", "p")
+endif
+
+set undodir=~/.config/nvim/undodir
+set undofile
+set undolevels=99999 "maximum number of changes that can be undone
+set undoreload=10000 "maximum number lines to save for undo on a buffer reload
+
 
 runtime plugins.vim

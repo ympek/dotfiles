@@ -2,6 +2,9 @@ set completeopt=menu,menuone,noselect
 
 lua <<EOF
   -- Set up nvim-cmp.
+  require("mason").setup()
+  require("mason-lspconfig").setup()
+
   local cmp = require'cmp'
   local lspkind = require('lspkind')
   local luasnip = require('luasnip')
@@ -112,22 +115,36 @@ lua <<EOF
 
     -- Mappings.
     -- See `:help vim.lsp.*` for documentation on any of the below functions
-    local bufopts = { noremap=true, silent=true, buffer=bufnr }
-    vim.keymap.set('n', '<leader>dc', vim.lsp.buf.declaration, bufopts)
-    vim.keymap.set('n', '<leader>df', vim.lsp.buf.definition, bufopts)
-    vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
-    vim.keymap.set('n', '<leader>i', vim.lsp.buf.implementation, bufopts)
-    vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, bufopts)
+    -- local bufopts = { noremap=true, silent=true, buffer=bufnr }
+    local opts = { noremap = true, silent = true }
+    vim.api.nvim_buf_set_keymap(bufnr, "n", "<leader>dc", "<cmd>lua vim.lsp.buf.declaration()<CR>", opts)
+    vim.api.nvim_buf_set_keymap(bufnr, "n", "<leader>df", "<cmd>lua vim.lsp.buf.definition()<CR>", opts)
+    vim.api.nvim_buf_set_keymap(bufnr, "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", opts)
+    vim.api.nvim_buf_set_keymap(bufnr, "n", "<C-k>", "<cmd>lua vim.lsp.buf.code_action()<CR>", opts)
+    vim.api.nvim_buf_set_keymap(bufnr, "v", "<C-k>", "<cmd>lua vim.lsp.buf.range_code_action()<CR>", opts)
+    vim.api.nvim_buf_set_keymap(bufnr, "n", "<leader>i", "<cmd>lua vim.lsp.buf.implementation()<CR>", opts)
+    -- vim.api.nvim_buf_set_keymap(bufnr, "n", "<leader>s", "<cmd>lua vim.lsp.buf.signature_help()<CR>", opts)
+    -- vim.api.nvim_buf_set_keymap(bufnr, "n", "<leader>lr", "<cmd>lua vim.lsp.buf.rename()<CR>", opts)
+    vim.api.nvim_buf_set_keymap(bufnr, "n", "<leader>n", "<cmd>lua vim.lsp.buf.references()<CR>", opts)
+    -- vim.api.nvim_buf_set_keymap(bufnr, "n", "<leader>f", "<cmd>lua vim.diagnostic.open_float()<CR>", opts)
+    vim.api.nvim_buf_set_keymap(bufnr, "n", "[d", '<cmd>lua vim.diagnostic.goto_prev({ border = "single" })<CR>', opts)
+    vim.api.nvim_buf_set_keymap(bufnr, "n", "]d", '<cmd>lua vim.diagnostic.goto_next({ border = "single" })<CR>', opts)
+    -- vim.api.nvim_buf_set_keymap(bufnr, "n", "<leader>q", "<cmd>lua vim.diagnostic.setloclist()<CR>", opts)
+    -- vim.keymap.set('n', '<leader>dc', vim.lsp.buf.declaration, bufopts)
+    -- vim.keymap.set('n', '<leader>df', vim.lsp.buf.definition, bufopts)
+    -- vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
+    -- vim.keymap.set('n', '<leader>i', vim.lsp.buf.implementation, bufopts)
+    -- vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, bufopts)
     -- vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, bufopts)
     -- vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, bufopts)
     -- vim.keymap.set('n', '<space>wl', function()
     --   print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
     -- end, bufopts)
-    vim.keymap.set('n', '<leader>td', vim.lsp.buf.type_definition, bufopts)
-    vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, bufopts)
+    -- vim.keymap.set('n', '<leader>td', vim.lsp.buf.type_definition, bufopts)
+    -- vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, bufopts)
     -- vim.keymap.set('n', '<leader>a', vim.lsp.buf.code_action, bufopts)
-    vim.keymap.set('n', '<leader>n', vim.lsp.buf.references, bufopts)
-    vim.keymap.set('n', '<space>f', vim.lsp.buf.formatting, bufopts)
+    -- vim.keymap.set('n', '<leader>n', vim.lsp.buf.references, bufopts)
+    -- vim.keymap.set('n', '<space>f', vim.lsp.buf.formatting, bufopts)
   end
 
   local lsp_flags = {
@@ -153,7 +170,7 @@ lua <<EOF
   }
 
   -- Set up lspconfig.
-  local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+  local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
   local lspconfig = require('lspconfig')
   -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
   lspconfig.pyright.setup {
@@ -197,14 +214,26 @@ lua <<EOF
         excludeArgs = { "-frounding-math"},
         extraArgs = { "-std=c++20" }
       };
+      cache = {
+        directory = "/tmp/";
+      };
     }
   }
 
-  lspconfig.tsserver.setup{}
+  lspconfig.tsserver.setup{
+    handlers = handlers,
+    capabilities = capabilities,
+    on_attach = on_attach,
+
+  }
 
   capabilities.textDocument.completion.completionItem.snippetSupport = true
 
   lspconfig.cssls.setup {
+    capabilities = capabilities,
+  }
+
+  lspconfig.tailwindcss.setup{
     capabilities = capabilities,
   }
 EOF

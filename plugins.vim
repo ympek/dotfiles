@@ -1,15 +1,3 @@
-" persistent undo
-" not really a plugin, but hardcoded path, so move it to vanilla when this is
-" fixed
-if !isdirectory($HOME."/.config/nvim/undodir")
-  call mkdir($HOME."/.config/nvim/undodir", "p")
-endif
-
-set undodir=~/.config/nvim/undodir
-set undofile
-set undolevels=99999 "maximum number of changes that can be undone
-set undoreload=10000 "maximum number lines to save for undo on a buffer reload
-
 " if I have plugins, then mode is in my statusline
 set noshowmode
 
@@ -26,7 +14,7 @@ Plug 'dyng/ctrlsf.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-commentary'
-Plug 'justinmk/vim-dirvish'
+" Plug 'justinmk/vim-dirvish'
 " Plug 'vim-scripts/taglist.vim'
 Plug 'tpope/vim-surround'
 " Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -47,7 +35,7 @@ Plug 'othree/html5.vim'
 " Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
 Plug 'chrisbra/Colorizer'
-
+Plug 'mustache/vim-mustache-handlebars'
 " colorschemes:
 Plug 'ympek/happy_hacking.vim'
 Plug 'ympek/iceberg.vim'
@@ -74,6 +62,8 @@ Plug 'maxmellon/vim-jsx-pretty'
 
 " completion
 Plug 'neovim/nvim-lspconfig'
+Plug 'williamboman/mason.nvim'
+Plug 'williamboman/mason-lspconfig.nvim'
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/cmp-buffer'
 Plug 'hrsh7th/cmp-path'
@@ -91,6 +81,9 @@ Plug 'folke/zen-mode.nvim'
 
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim', { 'branch': '0.1.x' }
+
+Plug 'lukas-reineke/indent-blankline.nvim'
+Plug 'google/vim-jsonnet'
 
 call plug#end()
 
@@ -216,11 +209,16 @@ require('lualine').setup {
 require("nvim-autopairs").setup {}
 require('nvim-ts-autotag').setup{}
 require("zen-mode").setup {}
+require("indent_blankline").setup {
+    -- for example, context is off by default, use this to turn it on
+    show_current_context = true,
+    show_current_context_start = true,
+}
 EOF
 
 nnoremap <leader>f :NvimTreeToggle<CR>
+nnoremap <leader>n :NvimTreeFindFile<CR>
 " nnoremap <leader>f :NvimTreeRefresh<CR>
-" nnoremap <leader>n :NvimTreeFindFile<CR>
 " NvimTreeOpen and NvimTreeClose are also available if you need them
 
 let g:rtagsRcCmd = 'rtags-rc'
