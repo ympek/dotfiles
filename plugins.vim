@@ -40,7 +40,8 @@ Plug 'mustache/vim-mustache-handlebars'
 Plug 'ympek/happy_hacking.vim'
 Plug 'ympek/iceberg.vim'
 Plug 'ympek/melange'
-Plug 'FrenzyExists/aquarium-vim'
+Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
+Plug 'AlexvZyl/nordic.nvim', { 'branch': 'main' }
 
 Plug 'liuchengxu/vista.vim'
 Plug 'tweekmonster/startuptime.vim'
@@ -87,6 +88,8 @@ Plug 'google/vim-jsonnet'
 
 call plug#end()
 
+
+
 function! NearestMethodOrFunction() abort
   return get(b:, 'vista_nearest_method_or_function', '')
 endfunction
@@ -101,7 +104,7 @@ let g:buftabline_indicators=1
 
 let g:closetag_filenames = '*.html,*.xhtml,*.phtml,*.php,*.html.twig,*.twig'
 
-silent! colorscheme melange
+silent! colorscheme nordic
 
 " hi CursorLine cterm=NONE ctermbg=234
 hi SignatureMarkText ctermfg=162
@@ -135,12 +138,6 @@ let g:ctrlsf_auto_focus = {
 "       \ 'ag': '-p ~/.my_ignore -U'
 "       \ }
 
-" vim-buffergator uses <leader>b to BuffergatorOpen, i would like use it for
-" toggle.
-" nnoremap <leader>b :BuffergatorToggle<CR>
-" let g:buffergator_sort_regime='mru'
-" let g:buffergator_autoupdate=1
-
 " remove insert mode maps which a.vim adds (i dont like them)
 autocmd VimEnter * iunmap <Leader>ihn
 autocmd VimEnter * iunmap <Leader>ih
@@ -161,6 +158,9 @@ nmap <leader>a :A<CR>
 nnoremap <leader>t :FloatermNew<CR>
 nnoremap <leader>` :FloatermToggle<CR>
 
+" change floaterm bg color to something more dark
+hi Floaterm guibg=#191c24
+
 map <leader>h :silent! 0Glog -10<CR>:bot copen<CR>0f.3w
 " git show hash under cursor :))
 map <leader>gs "gyiw:FloatermNew! git show <C-r>g<CR>
@@ -176,8 +176,7 @@ nnoremap <silent> <leader>X :Bunlink!<CR>
 " kinda messes up in fuzzyfinding.... bcuz it's termbuffer.
 " to be fixed.
 tnoremap qq <C-\><C-n>:bd!<CR>
-tnoremap jk <C-\><C-n>
-tnoremap kj <C-\><C-n>
+tnoremap <Esc><Esc> <C-\><C-n>
 
 " stop fugitive from polluting my buffer list
 autocmd BufReadPost fugitive://* set bufhidden=delete
@@ -197,14 +196,10 @@ let g:html_indent_style1 = "inc"
 
 let g:alternateSearchPath = 'sfr:../source,sfr:../src,sfr:../include,sfr:../inc,sfr:../Include,sfr:../Source'
 
-" django stuff... for completion with pyright... notice it does not say .git
-" now...
-" autocmd FileType python let b:coc_root_patterns = ['.env', 'venv', '.venv', 'manage.py']
-
 lua << EOF
 require("nvim-tree").setup()
 require('lualine').setup {
-  options = { theme = 'jellybeans' }
+  options = { theme = 'nordic' }
 }
 require("nvim-autopairs").setup {}
 require('nvim-ts-autotag').setup{}
@@ -218,6 +213,7 @@ EOF
 
 nnoremap <leader>f :NvimTreeToggle<CR>
 nnoremap <leader>n :NvimTreeFindFile<CR>
+
 " nnoremap <leader>f :NvimTreeRefresh<CR>
 " NvimTreeOpen and NvimTreeClose are also available if you need them
 
