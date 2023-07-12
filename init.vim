@@ -83,8 +83,8 @@ noremap <F2> :set number!<CR>
 
 map <left> :cprev <CR>
 map <right> :cnext<CR>
-map <up> <nop>
-map <down> <nop>
+" map <up> <nop>
+" map <down> <nop>
 " annoying on thinkpad
 map <PageDown> <Nop>
 map <PageUp> <Nop>
@@ -139,7 +139,7 @@ let mapleader = "\<Space>"
 map <leader>q :call ToggleMouse()<CR>
 nmap <leader>o :call SaveAndPrintFilepath()<CR>
 map <leader>c :noh<CR>
-nnoremap <leader>w :vertical resize 160<CR>
+" nnoremap <leader>w :vertical resize 160<CR>
 nnoremap <leader>l :set wrap!<CR>
 " rename variable/fun etc in file
 nnoremap <silent><leader>R :%s/\<<c-r><c-w>\>//gI<c-f>$F/i
@@ -153,6 +153,8 @@ nnoremap <leader>ss <C-w><C-j>
 nnoremap <leader>sa <C-w><C-h>
 nnoremap <leader>sd <C-w><C-l>
 
+nnoremap <C-Right> :vertical resize +5<CR>
+nnoremap <C-Left> :vertical resize -5<CR>
 " persistent undo
 if !isdirectory($HOME."/.config/nvim/undodir")
   call mkdir($HOME."/.config/nvim/undodir", "p")
@@ -163,5 +165,6 @@ set undofile
 set undolevels=99999 "maximum number of changes that can be undone
 set undoreload=10000 "maximum number lines to save for undo on a buffer reload
 
+nno <leader>u :UndotreeToggle<CR>
 
 runtime plugins.vim

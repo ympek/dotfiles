@@ -43,7 +43,6 @@ Plug 'ympek/melange'
 Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
 Plug 'AlexvZyl/nordic.nvim', { 'branch': 'main' }
 
-Plug 'liuchengxu/vista.vim'
 Plug 'tweekmonster/startuptime.vim'
 " dont mess up my layout
 Plug 'orlp/vim-bunlink'
@@ -74,7 +73,6 @@ Plug 'L3MON4D3/LuaSnip'
 Plug 'saadparwaiz1/cmp_luasnip'
 
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-Plug 'kosayoda/nvim-lightbulb'
 Plug 'onsails/lspkind.nvim'
 Plug 'windwp/nvim-autopairs'
 Plug 'windwp/nvim-ts-autotag'
@@ -82,25 +80,23 @@ Plug 'folke/zen-mode.nvim'
 
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim', { 'branch': '0.1.x' }
+Plug 'xiyaowong/telescope-emoji.nvim'
 
 Plug 'lukas-reineke/indent-blankline.nvim'
 Plug 'google/vim-jsonnet'
 
+Plug 'github/copilot.vim'
+Plug 'kosayoda/nvim-lightbulb'
+
+Plug 'toppair/peek.nvim', { 'do': 'deno task --quiet build:fast' }
+
+Plug 'jose-elias-alvarez/null-ls.nvim'
+Plug 'MunifTanjim/prettier.nvim'
+
 call plug#end()
 
-
-
-function! NearestMethodOrFunction() abort
-  return get(b:, 'vista_nearest_method_or_function', '')
-endfunction
-
-" By default vista.vim never run if you don't call it explicitly.
-"
-" If you want to show the nearest function in your statusline automatically,
-" you can add the following line to your vimrc
-autocmd VimEnter * call vista#RunForNearestMethodOrFunction()
-
 let g:buftabline_indicators=1
+
 
 let g:closetag_filenames = '*.html,*.xhtml,*.phtml,*.php,*.html.twig,*.twig'
 
@@ -108,7 +104,6 @@ silent! colorscheme nordic
 
 " hi CursorLine cterm=NONE ctermbg=234
 hi SignatureMarkText ctermfg=162
-
 
 " fix annoying vim-commentary /* */
 autocmd FileType c,hpp,cpp,cs,java,php setlocal commentstring=//\ %s
@@ -151,15 +146,17 @@ let g:cpp_experimental_template_highlight = 1
 nnoremap <C-p> :Telescope find_files<CR>
 " leader maps - plugin-based
 nmap <leader>y :Telescope registers<CR>
-nmap <leader>k :Telescope tags<CR>
 nmap <leader>m :Telescope marks<CR>
 
 nmap <leader>a :A<CR>
-nnoremap <leader>t :FloatermNew<CR>
-nnoremap <leader>` :FloatermToggle<CR>
+nnoremap <leader>` :FloatermNew<CR>
+nnoremap <leader>t :FloatermToggle<CR>
 
 " change floaterm bg color to something more dark
 hi Floaterm guibg=#191c24
+
+" code actions
+nmap <leader>k :lua vim.lsp.buf.code_action()<CR>
 
 map <leader>h :silent! 0Glog -10<CR>:bot copen<CR>0f.3w
 " git show hash under cursor :))
@@ -209,6 +206,19 @@ require("indent_blankline").setup {
     show_current_context = true,
     show_current_context_start = true,
 }
+vim.api.nvim_create_user_command('PeekOpen', require('peek').open, {})
+vim.api.nvim_create_user_command('PeekClose', require('peek').close, {})
+
+require('telescope').load_extension('emoji')
+require('telescope').setup {
+  extensions = {
+    emoji = {
+      action = function(emoji)
+        vim.api.nvim_put({ emoji.value }, 'c', false, true)
+        end,
+      }
+    }
+  }
 EOF
 
 nnoremap <leader>f :NvimTreeToggle<CR>

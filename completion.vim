@@ -5,6 +5,8 @@ lua <<EOF
   require("mason").setup()
   require("mason-lspconfig").setup()
 
+  require('nvim-lightbulb').setup({autocmd = {enabled = true}})
+
   local cmp = require'cmp'
   local lspkind = require('lspkind')
   local luasnip = require('luasnip')
@@ -31,7 +33,7 @@ lua <<EOF
       documentation = cmp.config.window.bordered(),
     },
     mapping = {
-      ["<Tab>"] = cmp.mapping(function(fallback)
+      ["<C-j>"] = cmp.mapping(function(fallback)
         if cmp.visible() then
           cmp.select_next_item()
         elseif luasnip.expand_or_jumpable() then
@@ -42,7 +44,7 @@ lua <<EOF
           fallback()
         end
       end, { "i", "s" }),
-      ["<S-Tab>"] = cmp.mapping(function(fallback)
+      ["<C-k>"] = cmp.mapping(function(fallback)
         if cmp.visible() then
           cmp.select_prev_item()
         elseif luasnip.jumpable(-1) then
@@ -125,7 +127,7 @@ lua <<EOF
     vim.api.nvim_buf_set_keymap(bufnr, "n", "<leader>i", "<cmd>lua vim.lsp.buf.implementation()<CR>", opts)
     -- vim.api.nvim_buf_set_keymap(bufnr, "n", "<leader>s", "<cmd>lua vim.lsp.buf.signature_help()<CR>", opts)
     -- vim.api.nvim_buf_set_keymap(bufnr, "n", "<leader>lr", "<cmd>lua vim.lsp.buf.rename()<CR>", opts)
-    vim.api.nvim_buf_set_keymap(bufnr, "n", "<leader>n", "<cmd>lua vim.lsp.buf.references()<CR>", opts)
+    vim.api.nvim_buf_set_keymap(bufnr, "n", "<leader>e", "<cmd>lua vim.lsp.buf.references()<CR>", opts)
     -- vim.api.nvim_buf_set_keymap(bufnr, "n", "<leader>f", "<cmd>lua vim.diagnostic.open_float()<CR>", opts)
     vim.api.nvim_buf_set_keymap(bufnr, "n", "[d", '<cmd>lua vim.diagnostic.goto_prev({ border = "single" })<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, "n", "]d", '<cmd>lua vim.diagnostic.goto_next({ border = "single" })<CR>', opts)
@@ -168,6 +170,7 @@ lua <<EOF
     ["textDocument/hover"] =  vim.lsp.with(vim.lsp.handlers.hover, {border = border}),
     ["textDocument/signatureHelp"] =  vim.lsp.with(vim.lsp.handlers.signature_help, {border = border }),
   }
+
 
   -- Set up lspconfig.
   local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
@@ -236,4 +239,71 @@ lua <<EOF
   lspconfig.tailwindcss.setup{
     capabilities = capabilities,
   }
+
+  lspconfig.solargraph.setup{
+    capabilities = capabilities,
+  }
+
+  lspconfig.rust_analyzer.setup {
+    -- Server-specific settings. See `:help lspconfig-setup`
+    settings = {
+      ['rust-analyzer'] = {},
+    },
+  }
+
+  local null_ls = require("null-ls")
+  local group = vim.api.nvim_create_augroup("lsp_format_on_save", { clear = false })
+  local event = "BufWritePre" -- or "BufWritePost"
+  local async = event == "BufWritePost"
+
+  null_ls.setup({
+    on_attach = function(client, bufnr)
+      if client.supports_method("textDocument/formatting") then
+        vim.keymap.set("n", "<Leader>j", function()
+          vim.lsp.buf.format({ bufnr = vim.api.nvim_get_current_buf() })
+        end, { buffer = bufnr, desc = "[lsp] format" })
+
+        -- format on save
+--        vim.api.nvim_clear_autocmds({ buffer = bufnr, group = group })
+--        vim.api.nvim_create_autocmd(event, {
+--          buffer = bufnr,
+--          group = group,
+--          callback = function()
+--            vim.lsp.buf.format({ bufnr = bufnr, async = async })
+--          end,
+--          desc = "[lsp] format on save",
+--        })
+      end
+
+      if client.supports_method("textDocument/rangeFormatting") then
+        vim.keymap.set("x", "<Leader>j", function()
+          vim.lsp.buf.format({ bufnr = vim.api.nvim_get_current_buf() })
+        end, { buffer = bufnr, desc = "[lsp] format" })
+      end
+    end,
+  })
+
+
+  local prettier = require("prettier")
+  prettier.setup({
+    bin = 'prettierd',
+    ["null-ls"] = {
+    condition = function()
+      -- will always start
+      return true
+    end,
+    -- ...
+    },
+  })
 EOF
+
+
+" some more overrides here
+
+hi! link BufTabLineCurrent Title
+hi! link BufTabLineActive TabLineSel
+hi! CurSearch guifg=#87FFFF guibg=#000087
+hi! Search guifg=#87FFFF guibg=#000087
+hi! IlluminatedWordText guifg=none guibg=#1e2126 gui=none
+hi! IlluminatedWordRead guifg=none guibg=#1e2126 gui=none
+hi! IlluminatedWordWrite guifg=none guibg=#1e2126 gui=none
